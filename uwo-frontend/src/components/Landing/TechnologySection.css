@@ -1,0 +1,103 @@
+.technology {
+    padding: var(--spacing-3xl) 0;
+    position: relative;
+    background: transparent;
+}
+
+.technology-header {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-3xl);
+}
+
+.stat-card {
+    padding: var(--spacing-xl);
+    text-align: center;
+    border-radius: var(--radius-xl);
+    opacity: 0;
+    animation: slide-up 0.8s ease-out forwards;
+    transition: all var(--transition-normal);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--glow-cyan);
+}
+
+.stat-card .stat-value {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    margin-bottom: var(--spacing-xs);
+    font-family: var(--font-display);
+}
+
+.stat-card .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tech-stack {
+    text-align: center;
+}
+
+.tech-stack-title {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-secondary);
+}
+
+.tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.tech-badge {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-cyan-primary);
+    transition: all var(--transition-normal);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+}
+
+.tech-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-cyan);
+    border-color: var(--color-cyan-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .technology {
+        padding: var(--spacing-2xl) 0;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+    }
+
+    .tech-badges {
+        gap: var(--spacing-xs);
+    }
+
+    .tech-badge {
+        padding: var(--spacing-xs) var(--spacing-md);
+        font-size: 0.8125rem;
+    }
+}

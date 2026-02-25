@@ -1,0 +1,149 @@
+.navbar-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 1rem 0;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s;
+}
+
+.dark .navbar-header {
+    background: rgba(15, 23, 42, 0.4);
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.navbar-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.navbar-logo {
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: rotate(12deg);
+}
+
+.navbar-brand-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary, #4f46e5);
+    letter-spacing: -0.025em;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navbar-desktop-links {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .navbar-desktop-links {
+        display: block;
+    }
+
+    .navbar-desktop-links a {
+        text-decoration: none;
+    }
+}
+
+.login-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dark .login-btn {
+    color: #e2e8f0;
+}
+
+.login-btn:hover {
+    background: rgba(79, 70, 229, 0.05);
+    color: var(--primary, #4f46e5);
+}
+
+.login-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--primary, #4f46e5);
+    opacity: 0.8;
+}
+
+.mobile-menu-toggle {
+    display: block;
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #475569;
+}
+
+.dark .mobile-menu-toggle {
+    color: #e2e8f0;
+}
+
+@media (min-width: 768px) {
+    .mobile-menu-toggle {
+        display: none;
+    }
+}
+
+.mobile-menu {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.dark .mobile-menu {
+    background: #0f172a;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-content {
+    padding: 1rem 1.5rem;
+}
+
+.mobile-login-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    border: none;
+    font-weight: 700;
+    color: inherit;
+    cursor: pointer;
+}
