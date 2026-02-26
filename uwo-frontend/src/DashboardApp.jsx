@@ -83,7 +83,7 @@ function DashboardApp() {
     <div className={`app-container ${isLoaded ? 'loaded' : ''}`} style={{ display: 'flex', minHeight: '100vh', opacity: isLoaded ? 1 : 0, transition: 'opacity 0.8s ease' }}>
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleLogout} />
 
-      <main style={{ flex: 1, marginLeft: '260px', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <main className="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <Header user={user} onLogout={handleLogout} />
         <div className="content-area" style={{ flex: 1 }}>
           {renderPage()}

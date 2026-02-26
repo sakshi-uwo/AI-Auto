@@ -15,6 +15,13 @@ const BillingAndPlans = ({ setCurrentPage }) => {
     const [activeTab, setActiveTab] = useState('payment');
     const [loading, setLoading] = useState(true);
     const [previewPlan, setPreviewPlan] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const [activeAddons, setActiveAddons] = useState([
         { name: 'Extra Users (+5)', price: '₹999/mo', quantity: 0, enabled: false },
@@ -197,51 +204,70 @@ const BillingAndPlans = ({ setCurrentPage }) => {
         <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '5rem' }}>
 
             {/* 1. Page Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                justifyContent: 'space-between',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                marginBottom: '2rem',
+                gap: '1.5rem'
+            }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <button onClick={() => setCurrentPage('dashboard')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <ArrowLeft size={24} color="#64748b" />
                     </button>
                     <div>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0, color: '#1e293b' }}>Billing & Plans</h1>
-                        <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>Manage your subscription, usage limits, and invoices</p>
+                        <h1 style={{ fontSize: isMobile ? '1.5rem' : '1.8rem', fontWeight: 800, margin: 0, color: '#1e293b' }}>Billing & Plans</h1>
+                        <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: isMobile ? '0.8rem' : '0.9rem' }}>Manage your subscription and usage</p>
                     </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ padding: '6px 12px', background: '#dcfce7', color: '#166534', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#16a34a' }}></div> Active
-                    </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: isMobile ? '100%' : 'auto', flexWrap: 'wrap' }}>
+                    {!isMobile && (
+                        <div style={{ padding: '6px 12px', background: '#dcfce7', color: '#166534', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#16a34a' }}></div> Active
+                        </div>
+                    )}
                     <button
                         onClick={() => handleDownloadInvoice()}
-                        style={{ padding: '10px 20px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#1e293b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Download size={18} weight="bold" /> Download Invoice
+                        style={{ flex: isMobile ? 1 : 'initial', padding: '10px 15px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', color: '#1e293b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '0.85rem' }}>
+                        <Download size={18} weight="bold" /> Invoice
                     </button>
                     <button
                         onClick={() => document.getElementById('plans-selection')?.scrollIntoView({ behavior: 'smooth' })}
-                        style={{ padding: '10px 20px', borderRadius: '12px', border: 'none', background: 'var(--pivot-blue)', color: 'white', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 71, 171, 0.2)' }}>
-                        Upgrade Plan
+                        style={{ flex: isMobile ? 1 : 'initial', padding: '10px 15px', borderRadius: '12px', border: 'none', background: 'var(--pivot-blue)', color: 'white', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 71, 171, 0.2)', fontSize: '0.85rem' }}>
+                        Upgrade
                     </button>
                 </div>
             </div>
 
             {/* 2. Current Plan Summary */}
-            <div className="card" style={{ padding: '2rem', marginBottom: '2rem', background: 'linear-gradient(135deg, white 0%, #f8fafc 100%)', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                    <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--pivot-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 25px -5px rgba(0, 71, 171, 0.4)' }}>
-                        <Crown size={32} weight="fill" />
+            <div className="card" style={{
+                padding: isMobile ? '1.5rem' : '2rem',
+                marginBottom: '2rem',
+                background: 'linear-gradient(135deg, white 0%, #f8fafc 100%)',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                justifyContent: 'space-between',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                gap: '1.5rem'
+            }}>
+                <div style={{ display: 'flex', gap: isMobile ? '1rem' : '1.5rem', alignItems: 'center' }}>
+                    <div style={{ width: isMobile ? '48px' : '64px', height: isMobile ? '48px' : '64px', borderRadius: '16px', background: 'var(--pivot-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 25px -5px rgba(0, 71, 171, 0.4)' }}>
+                        <Crown size={isMobile ? 24 : 32} weight="fill" />
                     </div>
                     <div>
-                        <div style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Plan</div>
-                        <div style={{ fontSize: '2rem', fontWeight: 900, color: '#1e293b' }}>{billingData.plan} Plan</div>
-                        <div style={{ fontSize: '0.9rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ fontWeight: 700 }}>{plans.find(p => p.name === billingData.plan)?.price || '₹0'}</span> / month • {billingData.billingCycle} billing
+                        <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current Plan</div>
+                        <div style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 900, color: '#1e293b' }}>{billingData.plan} Plan</div>
+                        <div style={{ fontSize: '0.85rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontWeight: 700 }}>{plans.find(p => p.name === billingData.plan)?.price || '₹0'}</span> / month
                         </div>
                     </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                    <div style={{ marginBottom: '8px', fontSize: '0.9rem', color: '#64748b' }}>Renewal Date: <span style={{ fontWeight: 700, color: '#1e293b' }}>{new Date(billingData.nextBillingDate).toLocaleDateString()}</span></div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
-                        <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Auto-Renew</span>
+                <div style={{ textAlign: isMobile ? 'left' : 'right', width: isMobile ? '100%' : 'auto' }}>
+                    <div style={{ marginBottom: '8px', fontSize: '0.85rem', color: '#64748b' }}>Next Billing: <span style={{ fontWeight: 700, color: '#1e293b' }}>{new Date(billingData.nextBillingDate).toLocaleDateString()}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'flex-start' : 'flex-end', gap: '10px' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Auto-Renew</span>
                         <div
                             onClick={toggleAutoRenew}
                             style={{
@@ -265,7 +291,7 @@ const BillingAndPlans = ({ setCurrentPage }) => {
 
             {/* 3. Usage Overview */}
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.5rem' }}>Automated Live Usage</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(5, 1fr)', gap: '1rem', marginBottom: '3rem' }}>
                 {usageStats.map((stat, i) => (
                     <div key={i} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, color: '#64748b' }}>
@@ -288,34 +314,36 @@ const BillingAndPlans = ({ setCurrentPage }) => {
                 ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
                 {/* 4. Plan Features & Limits */}
-                <div className="card" style={{ padding: '1.5rem' }}>
+                <div className="card" style={{ padding: isMobile ? '1rem' : '1.5rem', overflowX: 'auto' }}>
                     <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.5rem' }}>
                         Live Plan Entitlements <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', marginLeft: '10px' }}>({previewPlan || billingData.plan})</span>
                     </h3>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.85rem', color: '#64748b' }}>FEATURE</th>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.85rem', color: '#64748b' }}>LIMIT</th>
-                                <th style={{ textAlign: 'right', padding: '12px', fontSize: '0.85rem', color: '#64748b' }}>STATUS</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {planDetails[previewPlan || billingData.plan].map((feature, i) => (
-                                <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <td style={{ padding: '12px', fontWeight: 600, color: '#334155' }}>{feature.name}</td>
-                                    <td style={{ padding: '12px', fontWeight: 700, color: '#1e293b' }}>{feature.limit}</td>
-                                    <td style={{ padding: '12px', textAlign: 'right' }}>
-                                        {feature.status === 'active' && <CheckCircle size={20} weight="fill" color="#10b981" />}
-                                        {feature.status === 'warning' && <Warning size={20} weight="fill" color="#f59e0b" />}
-                                        {feature.status === 'locked' && <LockIcon size={20} weight="fill" color="#cbd5e1" />}
-                                    </td>
+                    <div className="table-wrapper">
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? '400px' : 'auto' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
+                                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.85rem', color: '#64748b' }}>FEATURE</th>
+                                    <th style={{ textAlign: 'left', padding: '12px', fontSize: '0.85rem', color: '#64748b' }}>LIMIT</th>
+                                    <th style={{ textAlign: 'right', padding: '12px', fontSize: '0.85rem', color: '#64748b' }}>STATUS</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {planDetails[previewPlan || billingData.plan].map((feature, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                        <td style={{ padding: '12px', fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>{feature.name}</td>
+                                        <td style={{ padding: '12px', fontWeight: 700, color: '#1e293b', fontSize: '0.85rem' }}>{feature.limit}</td>
+                                        <td style={{ padding: '12px', textAlign: 'right' }}>
+                                            {feature.status === 'active' && <CheckCircle size={20} weight="fill" color="#10b981" />}
+                                            {feature.status === 'warning' && <Warning size={20} weight="fill" color="#f59e0b" />}
+                                            {feature.status === 'locked' && <LockIcon size={20} weight="fill" color="#cbd5e1" />}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* 5. Upgrade / Downgrade Section */}
@@ -360,7 +388,7 @@ const BillingAndPlans = ({ setCurrentPage }) => {
 
             {/* 6. Add-Ons Section */}
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.5rem' }}>Available Add-Ons</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: '1.2rem', marginBottom: '3rem' }}>
                 {activeAddons.map((addon, i) => (
                     <div key={i} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <div>
@@ -394,47 +422,48 @@ const BillingAndPlans = ({ setCurrentPage }) => {
                 ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '2rem' }}>
                 {/* 7. Payment & Invoices */}
-                <div className="card" style={{ padding: '1.5rem' }}>
+                <div className="card" style={{ padding: isMobile ? '1rem' : '1.5rem', overflowX: 'auto' }}>
                     <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <Receipt size={24} color="var(--pivot-blue)" /> Payment & Invoices
                     </h3>
 
-                    {/* Tabs */}
-                    <div style={{ display: 'flex', gap: '2rem', borderBottom: '1px solid #e2e8f0', marginBottom: '1.5rem' }}>
-                        <div style={{ paddingBottom: '10px', borderBottom: '2px solid var(--pivot-blue)', fontWeight: 700, color: 'var(--pivot-blue)', cursor: 'pointer' }}>Invoices</div>
-                        <div style={{ paddingBottom: '10px', fontWeight: 600, color: '#94a3b8', cursor: 'pointer' }}>Payment Methods</div>
+                    <div style={{ display: 'flex', gap: '1.5rem', borderBottom: '1px solid #e2e8f0', marginBottom: '1.5rem' }}>
+                        <div style={{ paddingBottom: '10px', borderBottom: '2px solid var(--pivot-blue)', fontWeight: 700, color: 'var(--pivot-blue)', cursor: 'pointer', fontSize: '0.9rem' }}>Invoices</div>
+                        <div style={{ paddingBottom: '10px', fontWeight: 600, color: '#94a3b8', cursor: 'pointer', fontSize: '0.9rem' }}>Payment Methods</div>
                     </div>
 
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ textAlign: 'left', fontSize: '0.8rem', color: '#64748b' }}>
-                                <th style={{ padding: '10px' }}>INVOICE ID</th>
-                                <th style={{ padding: '10px' }}>DATE</th>
-                                <th style={{ padding: '10px' }}>AMOUNT</th>
-                                <th style={{ padding: '10px' }}>STATUS</th>
-                                <th style={{ padding: '10px', textAlign: 'right' }}>ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {invoices.map((inv, i) => (
-                                <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
-                                    <td style={{ padding: '12px', fontWeight: 600, color: '#334155' }}>{inv.id}</td>
-                                    <td style={{ padding: '12px', color: '#64748b' }}>{inv.date}</td>
-                                    <td style={{ padding: '12px', fontWeight: 700 }}>{inv.amount}</td>
-                                    <td style={{ padding: '12px' }}>
-                                        <span style={{ padding: '4px 10px', borderRadius: '12px', background: '#dcfce7', color: '#166534', fontSize: '0.75rem', fontWeight: 700 }}>{inv.status}</span>
-                                    </td>
-                                    <td style={{ padding: '12px', textAlign: 'right' }}>
-                                        <button
-                                            onClick={() => handleDownloadInvoice(inv)}
-                                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pivot-blue)' }}><Download size={18} weight="bold" /></button>
-                                    </td>
+                    <div className="table-wrapper">
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? '500px' : 'auto' }}>
+                            <thead>
+                                <tr style={{ textAlign: 'left', fontSize: '0.8rem', color: '#64748b' }}>
+                                    <th style={{ padding: '10px' }}>INVOICE ID</th>
+                                    <th style={{ padding: '10px' }}>DATE</th>
+                                    <th style={{ padding: '10px' }}>AMOUNT</th>
+                                    <th style={{ padding: '10px' }}>STATUS</th>
+                                    <th style={{ padding: '10px', textAlign: 'right' }}>ACTION</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {invoices.map((inv, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                        <td style={{ padding: '12px', fontWeight: 600, color: '#334155', fontSize: '0.85rem' }}>{inv.id}</td>
+                                        <td style={{ padding: '12px', color: '#64748b', fontSize: '0.85rem' }}>{inv.date}</td>
+                                        <td style={{ padding: '12px', fontWeight: 700, fontSize: '0.85rem' }}>{inv.amount}</td>
+                                        <td style={{ padding: '12px' }}>
+                                            <span style={{ padding: '4px 10px', borderRadius: '12px', background: '#dcfce7', color: '#166534', fontSize: '0.75rem', fontWeight: 700 }}>{inv.status}</span>
+                                        </td>
+                                        <td style={{ padding: '12px', textAlign: 'right' }}>
+                                            <button
+                                                onClick={() => handleDownloadInvoice(inv)}
+                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--pivot-blue)' }}><Download size={18} weight="bold" /></button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 {/* 8. Billing Settings & 9. Alerts */}

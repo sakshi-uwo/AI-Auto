@@ -20,9 +20,16 @@ const ManageSchedule = ({ setCurrentPage }) => {
     const [showAddTask, setShowAddTask] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
 
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     // Timeline / Gantt State
     const [currentDate, setCurrentDate] = useState(new Date());
     const ganttContainerRef = useRef(null);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -316,28 +323,28 @@ const ManageSchedule = ({ setCurrentPage }) => {
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ padding: isMobile ? '1rem' : '2rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '5rem' }}>
             {/* Header Area */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '2rem', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <button onClick={() => setCurrentPage('dashboard')} style={{ background: 'white', border: '1px solid #e2e8f0', padding: '8px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px' }}><ArrowLeft size={20} color="#64748b" /></button>
                     <div>
-                        <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 900, color: '#0f172a' }}>Project Schedule Management</h2>
-                        <p style={{ margin: 0, color: '#64748b', fontWeight: 600 }}>Track and manage task-level execution across the site</p>
+                        <h2 style={{ margin: 0, fontSize: isMobile ? '1.4rem' : '1.8rem', fontWeight: 900, color: '#0f172a' }}>Project Schedule Management</h2>
+                        <p style={{ margin: 0, color: '#64748b', fontWeight: 600, fontSize: isMobile ? '0.85rem' : '1rem' }}>Track and manage task-level execution across the site</p>
                     </div>
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <div style={{ background: '#f1f5f9', borderRadius: '12px', padding: '4px', display: 'flex' }}>
-                        <button onClick={() => setView('list')} style={{ padding: '8px 16px', border: 'none', borderRadius: '8px', background: view === 'list' ? 'white' : 'transparent', color: view === 'list' ? '#0047AB' : '#64748b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><List size={18} /> List</button>
-                        <button onClick={() => setView('calendar')} style={{ padding: '8px 16px', border: 'none', borderRadius: '8px', background: view === 'calendar' ? 'white' : 'transparent', color: view === 'calendar' ? '#0047AB' : '#64748b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={18} /> Calendar</button>
-                        <button onClick={() => setView('gantt')} style={{ padding: '8px 16px', border: 'none', borderRadius: '8px', background: view === 'gantt' ? 'white' : 'transparent', color: view === 'gantt' ? '#0047AB' : '#64748b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><ChartBar size={18} /> Gantt</button>
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
+                    <div style={{ background: '#f1f5f9', borderRadius: '12px', padding: '4px', display: 'flex', width: isMobile ? '100%' : 'auto' }}>
+                        <button onClick={() => setView('list')} style={{ flex: isMobile ? 1 : 'none', padding: '8px 16px', border: 'none', borderRadius: '8px', background: view === 'list' ? 'white' : 'transparent', color: view === 'list' ? '#0047AB' : '#64748b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><List size={18} /> List</button>
+                        <button onClick={() => setView('calendar')} style={{ flex: isMobile ? 1 : 'none', padding: '8px 16px', border: 'none', borderRadius: '8px', background: view === 'calendar' ? 'white' : 'transparent', color: view === 'calendar' ? '#0047AB' : '#64748b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><Calendar size={18} /> Calendar</button>
+                        <button onClick={() => setView('gantt')} style={{ flex: isMobile ? 1 : 'none', padding: '8px 16px', border: 'none', borderRadius: '8px', background: view === 'gantt' ? 'white' : 'transparent', color: view === 'gantt' ? '#0047AB' : '#64748b', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}><ChartBar size={18} /> Gantt</button>
                     </div>
-                    <button onClick={() => setShowAddTask(true)} style={{ padding: '10px 20px', background: '#0047AB', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(0,71,171,0.2)' }}><Plus size={20} weight="bold" /> Add Task</button>
+                    <button onClick={() => setShowAddTask(true)} style={{ width: isMobile ? '100%' : 'auto', justifyContent: 'center', padding: '10px 20px', background: '#0047AB', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(0,71,171,0.2)' }}><Plus size={20} weight="bold" /> Add Task</button>
                 </div>
             </div>
 
             {/* Summary Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)', gap: isMobile ? '1rem' : '1.5rem', marginBottom: '2rem' }}>
                 {[
                     { label: 'Total Tasks', value: stats.total, color: '#0047AB', icon: <List /> },
                     { label: 'Pending', value: stats.pending, color: '#64748b', icon: <Clock /> },
@@ -358,7 +365,7 @@ const ManageSchedule = ({ setCurrentPage }) => {
             </div>
 
             {/* Main Content View */}
-            <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #f1f5f9', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', overflow: 'hidden' }}>
+            <div style={{ background: 'white', borderRadius: '28px', border: '1px solid #f1f5f9', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', overflow: 'hidden' }} className="table-wrapper">
                 {view === 'list' ? (
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead style={{ background: '#f8fafc' }}>
@@ -403,13 +410,13 @@ const ManageSchedule = ({ setCurrentPage }) => {
 
             {/* Add Task Modal */}
             {showAddTask && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-                    <form onSubmit={handleAddTask} style={{ background: 'white', width: '100%', maxWidth: '600px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: isMobile ? 0 : '20px' }}>
+                    <form onSubmit={handleAddTask} style={{ background: 'white', width: '100%', maxWidth: '600px', borderRadius: isMobile ? '24px 24px 0 0' : '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', alignSelf: isMobile ? 'flex-end' : 'center' }}>
                         <div style={{ background: '#0047AB', padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h3 style={{ color: 'white', margin: 0, fontWeight: 900 }}>Create New Task</h3>
                             <button type="button" onClick={() => setShowAddTask(false)} style={{ background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={18} /></button>
                         </div>
-                        <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+                        <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.2rem', maxHeight: isMobile ? '70vh' : 'auto', overflowY: 'auto' }}>
                             <div style={{ gridColumn: 'span 2' }}><label style={{ display: 'block', marginBottom: '6px', fontWeight: 800, fontSize: '0.8rem', color: '#64748b' }}>TASK NAME</label><input style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 600, outline: 'none' }} required value={formData.task} onChange={e => setFormData({ ...formData, task: e.target.value })} /></div>
                             <div><label style={{ display: 'block', marginBottom: '6px', fontWeight: 800, fontSize: '0.8rem', color: '#64748b' }}>CATEGORY</label><select style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 600, outline: 'none' }} value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>{CATEGORIES.map(c => <option key={c}>{c}</option>)}</select></div>
                             <div><label style={{ display: 'block', marginBottom: '6px', fontWeight: 800, fontSize: '0.8rem', color: '#64748b' }}>LOCATION / AREA</label><input placeholder="e.g. Block A, Floor 2" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 600, outline: 'none' }} value={formData.locationArea} onChange={e => setFormData({ ...formData, locationArea: e.target.value })} /></div>
@@ -425,8 +432,8 @@ const ManageSchedule = ({ setCurrentPage }) => {
 
             {/* Edit / Update Progress Modal */}
             {editingTask && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-                    <div style={{ background: 'white', width: '100%', maxWidth: '500px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: isMobile ? 0 : '20px' }}>
+                    <div style={{ background: 'white', width: '100%', maxWidth: '500px', borderRadius: isMobile ? '24px 24px 0 0' : '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', alignSelf: isMobile ? 'flex-end' : 'center' }}>
                         <div style={{ background: '#f1f5f9', padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h3 style={{ color: '#0f172a', margin: 0, fontWeight: 900 }}>Update Progress</h3>
                             <button onClick={() => setEditingTask(null)} style={{ background: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={18} /></button>

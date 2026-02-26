@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>API Test</h1>
+    <div id="status">Testing...</div>
+    <pre id="output"></pre>
+    <script>
+        fetch('http://localhost:5000/api/lead')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('status').innerText = 'Success! Leads found: ' + data.length;
+                document.getElementById('output').innerText = JSON.stringify(data.slice(0, 2), null, 2);
+            })
+            .catch(err => {
+                document.getElementById('status').innerText = 'Error: ' + err.message;
+            });
+    </script>
+</body>
+</html>
+

@@ -18,6 +18,13 @@ const GlobalReports = ({ setCurrentPage }) => {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [activeTab, setActiveTab] = useState('Overview');
     const [exportStatus, setExportStatus] = useState(null); // null | 'pdf' | 'excel' | 'success'
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 820);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 820);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const tabs = [
         'Overview', 'Cost & Budget', 'Automation',
@@ -848,30 +855,32 @@ const GlobalReports = ({ setCurrentPage }) => {
             {/* 🔹 1. Top Header */}
             <div style={{
                 display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '3rem',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                marginBottom: '2rem',
                 background: 'white',
-                padding: '2rem',
+                padding: isMobile ? '1.5rem' : '2rem',
                 borderRadius: '24px',
                 boxShadow: '0 10px 40px rgba(0, 0, 0, 0.05)',
-                border: '1px solid #f0f4f8'
+                border: '1px solid #f0f4f8',
+                gap: '1.5rem'
             }}>
                 <div>
                     <h1 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#000000', margin: 0, letterSpacing: '-1px' }}>Global Reports</h1>
                     <p style={{ color: '#7a7a7a', fontSize: '0.95rem', marginTop: '4px', fontWeight: 600 }}>Enterprise site performance analytics</p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+                <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', gap: '1.2rem', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
                     {/* Date Range Picker */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', position: 'relative' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', position: 'relative', flex: isMobile ? '1 1 140px' : 'initial' }}>
                         <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', marginLeft: '4px', letterSpacing: '0.5px' }}>DATE RANGE</label>
                         <div
                             onClick={() => toggleDropdown('date')}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 18px',
                                 background: '#f8fafc', borderRadius: '14px', border: activeDropdown === 'date' ? '1.5px solid var(--pivot-blue)' : '1.5px solid #edf2f7',
-                                cursor: 'pointer', minWidth: '160px', transition: 'all 0.2s'
+                                cursor: 'pointer', minWidth: isMobile ? '100%' : '160px', transition: 'all 0.2s'
                             }}
                         >
                             <CalendarBlank size={20} color="var(--pivot-blue)" weight="bold" />
@@ -897,14 +906,14 @@ const GlobalReports = ({ setCurrentPage }) => {
                     </div>
 
                     {/* Project Filter */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', position: 'relative' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', position: 'relative', flex: isMobile ? '1 1 180px' : 'initial' }}>
                         <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', marginLeft: '4px', letterSpacing: '0.5px' }}>PROJECT SELECTION</label>
                         <div
                             onClick={() => toggleDropdown('project')}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 18px',
                                 background: '#f8fafc', borderRadius: '14px', border: activeDropdown === 'project' ? '1.5px solid var(--pivot-blue)' : '1.5px solid #edf2f7',
-                                cursor: 'pointer', minWidth: '180px', transition: 'all 0.2s'
+                                cursor: 'pointer', minWidth: isMobile ? '100%' : '180px', transition: 'all 0.2s'
                             }}
                         >
                             <Funnel size={20} color="var(--pivot-blue)" weight="bold" />
@@ -930,7 +939,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                     </div>
 
                     {/* Export Options */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', flex: isMobile ? '1 1 100%' : 'initial' }}>
                         <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#7a7a7a', marginLeft: '4px' }}>EXPORT</label>
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <button
@@ -939,7 +948,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                                     display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px',
                                     background: '#fff5f5', color: '#c53030', border: '1.5px solid #feb2b2',
                                     borderRadius: '14px', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer',
-                                    transition: 'all 0.2s', opacity: exportStatus ? 0.6 : 1
+                                    transition: 'all 0.2s', opacity: exportStatus ? 0.6 : 1, flex: isMobile ? 1 : 'initial', justifyContent: 'center'
                                 }}
                                 disabled={!!exportStatus}
                             >
@@ -951,7 +960,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                                     display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px',
                                     background: '#f0fff4', color: '#22543d', border: '1.5px solid #c6f6d5',
                                     borderRadius: '14px', fontWeight: 900, fontSize: '0.85rem', cursor: 'pointer',
-                                    transition: 'all 0.2s', opacity: exportStatus ? 0.6 : 1
+                                    transition: 'all 0.2s', opacity: exportStatus ? 0.6 : 1, flex: isMobile ? 1 : 'initial', justifyContent: 'center'
                                 }}
                                 disabled={!!exportStatus}
                             >
@@ -961,7 +970,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                     </div>
 
                     {/* Refresh Icon */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', alignItems: 'center', flex: isMobile ? '0 0 auto' : 'initial' }}>
                         <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', letterSpacing: '0.5px' }}>SYNC</label>
                         <button
                             onClick={() => {
@@ -983,7 +992,7 @@ const GlobalReports = ({ setCurrentPage }) => {
             </div>
 
             {/* 🔹 2. Summary Cards (Top Row) */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.2rem', marginBottom: '2.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(5, 1fr)', gap: '1.2rem', marginBottom: '2.5rem' }}>
                 {[
                     { label: 'Total Projects', value: '42', detail: 'Across all regions', icon: <Buildings size={26} />, color: 'var(--pivot-blue)' },
                     { label: 'Active / Delayed', value: '38 / 4', detail: '90.4% On-track', icon: <Clock size={26} />, color: '#4CAF50' },
@@ -1034,8 +1043,11 @@ const GlobalReports = ({ setCurrentPage }) => {
                 padding: '6px',
                 background: '#f1f5f9',
                 borderRadius: '16px',
-                width: 'fit-content',
-                border: '1px solid #e2e8f0'
+                width: isMobile ? '100%' : 'fit-content',
+                border: '1px solid #e2e8f0',
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                scrollbarWidth: 'none' /* Firefox */
             }}>
                 {tabs.map(tab => (
                     <button
@@ -1076,9 +1088,9 @@ const GlobalReports = ({ setCurrentPage }) => {
                 activeTab === 'Overview' ? (
                     <>
                         {/* 🔹 4. Tab-wise Layout - Overview Tab */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.6fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
                             {/* Project Status Bar Chart */}
-                            <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ minHeight: isMobile ? '300px' : '400px', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                                     <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', margin: 0 }}>Project Status Portfolio</h3>
                                     <div style={{ fontSize: '0.8rem', color: '#7a7a7a', fontWeight: 700 }}>Regional Breakdown • 2026</div>
@@ -1099,7 +1111,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                             </div>
 
                             {/* On-time vs Delayed Pie Chart */}
-                            <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ minHeight: isMobile ? '300px' : '400px', display: 'flex', flexDirection: 'column' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', marginBottom: '2rem' }}>On-time vs Delayed</h3>
                                 <div style={{ flex: 1, background: '#f8fafc', borderRadius: '16px', border: '1px solid #edf2f7', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', position: 'relative' }}>
                                     <div style={{
@@ -1141,49 +1153,51 @@ const GlobalReports = ({ setCurrentPage }) => {
                                     Generate Full Audit
                                 </button>
                             </div>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ textAlign: 'left', borderBottom: '1px solid #f0f0f0' }}>
-                                        {['Project Title', 'Category', 'Status', 'Efficiency', 'Timeline'].map((h, i) => (
-                                            <th key={i} style={{ padding: '12px 16px', color: '#7a7a7a', fontSize: '0.8rem', fontWeight: 700 }}>{h.toUpperCase()}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {[
-                                        { title: 'Downtown Heights', cat: 'Residential', status: 'On Track', eff: '94%', time: '82% Done' },
-                                        { title: 'Green Valley Estate', cat: 'Luxury Villa', status: 'Accelerated', eff: '98%', time: '45% Done' },
-                                        { title: 'Skyline Towers', cat: 'Commercial', status: 'Critical', eff: '62%', time: '12% Done' }
-                                    ].map((row, i) => (
-                                        <tr key={i} style={{ borderBottom: '1px solid #f8f9fa' }}>
-                                            <td style={{ padding: '16px', fontWeight: 800, color: '#1a1a1a' }}>{row.title}</td>
-                                            <td style={{ padding: '16px', fontWeight: 600, color: '#4a5568', fontSize: '0.9rem' }}>{row.cat}</td>
-                                            <td style={{ padding: '16px' }}>
-                                                <span style={{
-                                                    padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800,
-                                                    background: row.status === 'Critical' ? '#fee2e2' : '#e6f4ea',
-                                                    color: row.status === 'Critical' ? '#dc2626' : '#1e7e34'
-                                                }}>{row.status}</span>
-                                            </td>
-                                            <td style={{ padding: '16px', fontWeight: 700, color: 'var(--pivot-blue)' }}>{row.eff}</td>
-                                            <td style={{ padding: '16px' }}>
-                                                <div style={{ width: '100px', height: '6px', background: '#edf2f7', borderRadius: '3px', overflow: 'hidden' }}>
-                                                    <div style={{ width: row.time.split('%')[0] + '%', height: '100%', background: 'var(--pivot-blue)' }}></div>
-                                                </div>
-                                                <div style={{ fontSize: '0.7rem', color: '#7a7a7a', marginTop: '4px', fontWeight: 600 }}>{row.time}</div>
-                                            </td>
+                            <div className="table-wrapper">
+                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                                    <thead>
+                                        <tr style={{ textAlign: 'left', borderBottom: '1px solid #f0f0f0' }}>
+                                            {['Project Title', 'Category', 'Status', 'Efficiency', 'Timeline'].map((h, i) => (
+                                                <th key={i} style={{ padding: '12px 16px', color: '#7a7a7a', fontSize: '0.8rem', fontWeight: 700 }}>{h.toUpperCase()}</th>
+                                            ))}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { title: 'Downtown Heights', cat: 'Residential', status: 'On Track', eff: '94%', time: '82% Done' },
+                                            { title: 'Green Valley Estate', cat: 'Luxury Villa', status: 'Accelerated', eff: '98%', time: '45% Done' },
+                                            { title: 'Skyline Towers', cat: 'Commercial', status: 'Critical', eff: '62%', time: '12% Done' }
+                                        ].map((row, i) => (
+                                            <tr key={i} style={{ borderBottom: '1px solid #f8f9fa' }}>
+                                                <td style={{ padding: '16px', fontWeight: 800, color: '#1a1a1a' }}>{row.title}</td>
+                                                <td style={{ padding: '16px', fontWeight: 600, color: '#4a5568', fontSize: '0.9rem' }}>{row.cat}</td>
+                                                <td style={{ padding: '16px' }}>
+                                                    <span style={{
+                                                        padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800,
+                                                        background: row.status === 'Critical' ? '#fee2e2' : '#e6f4ea',
+                                                        color: row.status === 'Critical' ? '#dc2626' : '#1e7e34'
+                                                    }}>{row.status}</span>
+                                                </td>
+                                                <td style={{ padding: '16px', fontWeight: 700, color: 'var(--pivot-blue)' }}>{row.eff}</td>
+                                                <td style={{ padding: '16px' }}>
+                                                    <div style={{ width: '100px', height: '6px', background: '#edf2f7', borderRadius: '3px', overflow: 'hidden' }}>
+                                                        <div style={{ width: row.time.split('%')[0] + '%', height: '100%', background: 'var(--pivot-blue)' }}></div>
+                                                    </div>
+                                                    <div style={{ fontSize: '0.7rem', color: '#7a7a7a', marginTop: '4px', fontWeight: 600 }}>{row.time}</div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </>
                 ) : activeTab === 'Cost & Budget' ? (
                     <>
                         {/* 🔹 Cost & Budget Tab Layout */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.6fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
                             {/* 1. Budget vs actual line chart */}
-                            <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ minHeight: isMobile ? '300px' : '400px', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                                     <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', margin: 0 }}>Budget vs Actual Spend</h3>
                                     <div style={{ fontSize: '0.8rem', color: '#7a7a7a', fontWeight: 700 }}>Monthly Cumulative • FY 2026</div>
@@ -1214,7 +1228,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                             </div>
 
                             {/* 3. Cost overrun project list */}
-                            <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ minHeight: isMobile ? 'auto' : '400px', display: 'flex', flexDirection: 'column' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', marginBottom: '1.5rem' }}>Top Cost Overruns</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                     {[
@@ -1248,39 +1262,41 @@ const GlobalReports = ({ setCurrentPage }) => {
                                     Export BOQ
                                 </button>
                             </div>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ textAlign: 'left', borderBottom: '1px solid #f0f0f0' }}>
-                                        {['Material Item', 'Unit', 'Planned Qty', 'Used Qty', 'Variance', 'Cost Impact'].map((h, i) => (
-                                            <th key={i} style={{ padding: '12px 16px', color: '#7a7a7a', fontSize: '0.8rem', fontWeight: 700 }}>{h.toUpperCase()}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {[
-                                        { item: 'Structural Steel', unit: 'Tons', planned: '450', used: '462', var: '+12', cost: '$18,400' },
-                                        { item: 'Ready-Mix Concrete', unit: 'm³', planned: '2,200', used: '2,150', var: '-50', cost: '-$4,500' },
-                                        { item: 'Cement Bags', unit: 'Bags', planned: '12,000', used: '13,200', var: '+1,200', cost: '$7,200' },
-                                        { item: 'Electrical Cabling', unit: 'Meters', planned: '8,500', used: '9,100', var: '+600', cost: '$2,100' }
-                                    ].map((row, i) => (
-                                        <tr key={i} style={{ borderBottom: '1px solid #f8f9fa' }}>
-                                            <td style={{ padding: '16px', fontWeight: 800, color: '#1a1a1a' }}>{row.item}</td>
-                                            <td style={{ padding: '16px', color: '#64748b', fontWeight: 600 }}>{row.unit}</td>
-                                            <td style={{ padding: '16px', fontWeight: 700 }}>{row.planned}</td>
-                                            <td style={{ padding: '16px', fontWeight: 700 }}>{row.used}</td>
-                                            <td style={{ padding: '16px', fontWeight: 800, color: row.var.startsWith('+') ? '#dc2626' : '#16a34a' }}>{row.var}</td>
-                                            <td style={{ padding: '16px', fontWeight: 900, color: '#1a1a1a' }}>{row.cost}</td>
+                            <div className="table-wrapper">
+                                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
+                                    <thead>
+                                        <tr style={{ textAlign: 'left', borderBottom: '1px solid #f0f0f0' }}>
+                                            {['Material Item', 'Unit', 'Planned Qty', 'Used Qty', 'Variance', 'Cost Impact'].map((h, i) => (
+                                                <th key={i} style={{ padding: '12px 16px', color: '#7a7a7a', fontSize: '0.8rem', fontWeight: 700 }}>{h.toUpperCase()}</th>
+                                            ))}
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { item: 'Structural Steel', unit: 'Tons', planned: '450', used: '462', var: '+12', cost: '$18,400' },
+                                            { item: 'Ready-Mix Concrete', unit: 'm³', planned: '2,200', used: '2,150', var: '-50', cost: '-$4,500' },
+                                            { item: 'Cement Bags', unit: 'Bags', planned: '12,000', used: '13,200', var: '+1,200', cost: '$7,200' },
+                                            { item: 'Electrical Cabling', unit: 'Meters', planned: '8,500', used: '9,100', var: '+600', cost: '$2,100' }
+                                        ].map((row, i) => (
+                                            <tr key={i} style={{ borderBottom: '1px solid #f8f9fa' }}>
+                                                <td style={{ padding: '16px', fontWeight: 800, color: '#1a1a1a' }}>{row.item}</td>
+                                                <td style={{ padding: '16px', color: '#64748b', fontWeight: 600 }}>{row.unit}</td>
+                                                <td style={{ padding: '16px', fontWeight: 700 }}>{row.planned}</td>
+                                                <td style={{ padding: '16px', fontWeight: 700 }}>{row.used}</td>
+                                                <td style={{ padding: '16px', fontWeight: 800, color: row.var.startsWith('+') ? '#dc2626' : '#16a34a' }}>{row.var}</td>
+                                                <td style={{ padding: '16px', fontWeight: 900, color: '#1a1a1a' }}>{row.cost}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </>
                 ) : activeTab === 'Automation' ? (
                     <>
                         {/* 🔹 Automation Tab Layout */}
                         {/* 1. Automation execution count (Highlights) */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.2rem', marginBottom: '2.5rem' }}>
                             {[
                                 { label: 'Total AI Executions', value: '12,842', detail: 'Last 30 days', color: 'var(--pivot-blue)' },
                                 { label: 'Average Task Duration', value: '1.2s', detail: '-85% vs human manual', color: '#4CAF50' },
@@ -1294,9 +1310,9 @@ const GlobalReports = ({ setCurrentPage }) => {
                             ))}
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.6fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
                             {/* 2. Time saved graph */}
-                            <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ minHeight: isMobile ? '300px' : '400px', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                                     <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', margin: 0 }}>Efficiency: Time Saved (Cumulative)</h3>
                                     <div style={{ fontSize: '0.8rem', color: '#7a7a7a', fontWeight: 700 }}>Weekly Growth • Hours</div>
@@ -1321,7 +1337,7 @@ const GlobalReports = ({ setCurrentPage }) => {
                             </div>
 
                             {/* 3. Automation success vs failure chart */}
-                            <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ minHeight: isMobile ? 'auto' : '400px', display: 'flex', flexDirection: 'column' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', marginBottom: '2rem' }}>Execution Integrity</h3>
                                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2rem', justifyContent: 'center' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1352,9 +1368,9 @@ const GlobalReports = ({ setCurrentPage }) => {
                 ) : activeTab === 'AI Insights' ? (
                     <>
                         {/* 🔹 AI Insights Tab Layout */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
                             {/* 1. Delay risk heatmap */}
-                            <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div className="card" style={{ display: 'flex', flexDirection: 'column', minHeight: isMobile ? 'auto' : '400px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <div>
                                         <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1a1a1a', margin: 0 }}>Delay Risk Heatmap</h3>

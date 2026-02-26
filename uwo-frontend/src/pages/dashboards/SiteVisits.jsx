@@ -119,8 +119,12 @@ const CalendarPreview = ({ visits = [] }) => {
 const SiteVisits = () => {
     const [visits, setVisits] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+
         const fetchVisits = async () => {
             try {
                 const response = await visitService.getAll();
@@ -143,6 +147,7 @@ const SiteVisits = () => {
         });
 
         return () => {
+            window.removeEventListener('resize', handleResize);
             socketService.off('visit-scheduled');
             socketService.off('visit-status-updated');
         };
@@ -181,34 +186,36 @@ const SiteVisits = () => {
                         <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Visit Schedule</h2>
                     </div>
 
-                    <table className="visits-table">
-                        <thead>
-                            <tr>
-                                <th>Lead Name</th>
-                                <th>Project Name</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Assigned Executive</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {visits.map((visit) => (
-                                <tr key={visit._id} className="visit-row">
-                                    <td style={{ fontWeight: 600 }}>{visit.lead?.name || 'N/A'}</td>
-                                    <td>{visit.project?.name || 'N/A'}</td>
-                                    <td>{new Date(visit.visitDate).toLocaleDateString()}</td>
-                                    <td>{new Date(visit.visitDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-                                    <td>{visit.executive}</td>
-                                    <td>
-                                        <span className={`status-badge ${getStatusClass(visit.status)}`}>
-                                            {visit.status}
-                                        </span>
-                                    </td>
+                    <div className="table-wrapper">
+                        <table className="visits-table" style={{ minWidth: isMobile ? '700px' : 'auto' }}>
+                            <thead>
+                                <tr>
+                                    <th>Lead Name</th>
+                                    <th>Project Name</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Assigned Executive</th>
+                                    <th>Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {visits.map((visit) => (
+                                    <tr key={visit._id} className="visit-row">
+                                        <td style={{ fontWeight: 600 }}>{visit.lead?.name || 'N/A'}</td>
+                                        <td>{visit.project?.name || 'N/A'}</td>
+                                        <td>{new Date(visit.visitDate).toLocaleDateString()}</td>
+                                        <td>{new Date(visit.visitDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                                        <td>{visit.executive}</td>
+                                        <td>
+                                            <span className={`status-badge ${getStatusClass(visit.status)}`}>
+                                                {visit.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <CalendarPreview visits={visits} />

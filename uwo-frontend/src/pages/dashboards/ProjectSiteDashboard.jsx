@@ -35,6 +35,13 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
     const [quickLog, setQuickLog] = useState('');
     const [isSavingLog, setIsSavingLog] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         fetchAllData();
@@ -162,43 +169,45 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
     const dashboardStats = getStats();
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif', background: '#f8fafc', minHeight: '100vh', position: 'relative' }}>
+        <div style={{ padding: isMobile ? '1rem' : '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif', background: '#f8fafc', minHeight: '100vh', position: 'relative' }}>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem' }}>
                 <div>
-                    <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#003380', margin: 0 }}>Site Operations Dashboard</h2>
+                    <h2 style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#003380', margin: 0 }} className="h2">Site Operations Dashboard</h2>
                     <p style={{ color: '#64748b', fontWeight: 600, fontSize: '1rem', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <MapPin size={20} weight="bold" /> Downtown Heights - Site A
+                        <MapPin size={20} weight="bold" /> Downtown Heights<span className="desktop-only"> - Site A</span>
                     </p>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
                     <button onClick={() => setShowIncidentModal(true)} style={{
                         display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
                         background: 'white', color: '#be123c', border: '1px solid #fda4af',
-                        borderRadius: '12px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
+                        borderRadius: '12px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
+                        flex: isMobile ? 1 : 'none', fontSize: isMobile ? '0.85rem' : '1rem'
                     }}
                         onMouseEnter={(e) => e.currentTarget.style.background = '#fff1f2'}
                         onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
                     >
-                        <WarningCircle size={20} weight="bold" /> Report Incident
+                        <WarningCircle size={20} weight="bold" /> <span className="desktop-only">Report</span> Incident
                     </button>
                     <button
                         onClick={() => setShowSiteLogModal(true)}
                         style={{
                             display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
                             background: '#0047AB', color: 'white', border: 'none',
-                            borderRadius: '12px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
+                            borderRadius: '12px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
+                            flex: isMobile ? 1 : 'none', fontSize: isMobile ? '0.85rem' : '1rem'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 71, 171, 0.4)'}
                         onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
                     >
-                        <Plus size={20} weight="bold" /> New Site Log
+                        <Plus size={20} weight="bold" /> <span className="desktop-only">New</span> Site Log
                     </button>
                 </div>
             </div>
 
             {/* Quick Stats Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
                 <div style={{
                     background: 'white', padding: '2rem', borderRadius: '24px',
                     border: '1px solid #f1f5f9', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
@@ -240,7 +249,7 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2.5fr 1fr', gap: '2rem' }}>
                 {/* Left Column */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                     {/* Daily Execution Tracker */}
@@ -312,50 +321,52 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                                 <Package size={16} weight="bold" /> Record Usage
                             </button>
                         </div>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>ITEM</th>
-                                    <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>USAGE TODAY</th>
-                                    <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>INVENTORY</th>
-                                    <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>STATUS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {materialUsage.length === 0 ? (
-                                    <tr><td colSpan="4" style={{ textAlign: 'center', padding: '2.5rem', color: '#94a3b8', fontWeight: 600 }}>No materials in inventory. Add materials to get started.</td></tr>
-                                ) : materialUsage.map((m, idx) => {
-                                    const statusColors = {
-                                        Available: { bg: '#f0fdf4', color: '#16a34a' },
-                                        Requested: { bg: '#fff1f2', color: '#e11d48' },
-                                        'Low Stock': { bg: '#fffbeb', color: '#d97706' },
-                                        'In Transit': { bg: '#eff6ff', color: '#2563eb' },
-                                        Arrived: { bg: '#f0fdf4', color: '#16a34a' },
-                                    };
-                                    const sc = statusColors[m.status] || { bg: '#f1f5f9', color: '#64748b' };
-                                    const remaining = m.remainingQty ?? m.qty ?? 0;
-                                    const used = m.usedQty ?? 0;
-                                    return (
-                                        <tr key={m._id || idx} style={{ borderBottom: '1px solid #f8fafc' }}>
-                                            <td style={{ padding: '1rem' }}>
-                                                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a' }}>{m.item}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>{m.category}</div>
-                                            </td>
-                                            <td style={{ padding: '1rem', fontSize: '0.9rem', fontWeight: 700, color: '#0047AB' }}>
-                                                {used > 0 ? `${used} ${m.unit || ''}` : '—'}
-                                            </td>
-                                            <td style={{ padding: '1rem' }}>
-                                                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>{remaining} {m.unit || ''}</div>
-                                                <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>of {m.qty || 0} total</div>
-                                            </td>
-                                            <td style={{ padding: '1rem' }}>
-                                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: sc.color, padding: '4px 10px', background: sc.bg, borderRadius: '6px' }}>{m.status}</span>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                        <div className="table-wrapper">
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                        <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>ITEM</th>
+                                        <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>USAGE TODAY</th>
+                                        <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>INVENTORY</th>
+                                        <th style={{ textAlign: 'left', padding: '1rem', color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700 }}>STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {materialUsage.length === 0 ? (
+                                        <tr><td colSpan="4" style={{ textAlign: 'center', padding: '2.5rem', color: '#94a3b8', fontWeight: 600 }}>No materials in inventory. Add materials to get started.</td></tr>
+                                    ) : materialUsage.map((m, idx) => {
+                                        const statusColors = {
+                                            Available: { bg: '#f0fdf4', color: '#16a34a' },
+                                            Requested: { bg: '#fff1f2', color: '#e11d48' },
+                                            'Low Stock': { bg: '#fffbeb', color: '#d97706' },
+                                            'In Transit': { bg: '#eff6ff', color: '#2563eb' },
+                                            Arrived: { bg: '#f0fdf4', color: '#16a34a' },
+                                        };
+                                        const sc = statusColors[m.status] || { bg: '#f1f5f9', color: '#64748b' };
+                                        const remaining = m.remainingQty ?? m.qty ?? 0;
+                                        const used = m.usedQty ?? 0;
+                                        return (
+                                            <tr key={m._id || idx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a' }}>{m.item}</div>
+                                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>{m.category}</div>
+                                                </td>
+                                                <td style={{ padding: '1rem', fontSize: '0.9rem', fontWeight: 700, color: '#0047AB' }}>
+                                                    {used > 0 ? `${used} ${m.unit || ''}` : '—'}
+                                                </td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#1e293b' }}>{remaining} {m.unit || ''}</div>
+                                                    <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>of {m.qty || 0} total</div>
+                                                </td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: sc.color, padding: '4px 10px', background: sc.bg, borderRadius: '6px' }}>{m.status}</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     {/* Site Progress Media */}
@@ -380,7 +391,7 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                                 </button>
                             </div>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1rem' }}>
                             {(() => {
                                 const photos = siteLogs.flatMap(l => l.photos || []).map(url => ({
                                     url: url.startsWith('/uploads') ? `${API_BASE_URL}${url}` : url,
@@ -419,7 +430,7 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                     {/* Media Upload Modal */}
                     {showMediaModal && (
                         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10001 }}>
-                            <div style={{ background: 'white', width: '450px', borderRadius: '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+                            <div style={{ background: 'white', width: isMobile ? '100%' : '450px', borderRadius: isMobile ? '24px 24px 0 0' : '24px', padding: '2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', alignSelf: isMobile ? 'flex-end' : 'center' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Upload {mediaType === 'photo' ? 'Progress Photo' : 'Site Video'}</h3>
                                     <button onClick={() => setShowMediaModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={24} color="#64748b" /></button>
@@ -681,12 +692,12 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10002, padding: '20px'
                 }}>
                     <div style={{
-                        background: 'white', width: '100%', maxWidth: '600px', maxHeight: '90vh',
-                        borderRadius: '28px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)',
-                        overflow: 'hidden', display: 'flex', flexDirection: 'column'
+                        background: 'white', width: '100%', maxWidth: '600px', maxHeight: isMobile ? '85vh' : '90vh',
+                        borderRadius: isMobile ? '28px 28px 0 0' : '28px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)',
+                        overflow: 'hidden', display: 'flex', flexDirection: 'column', alignSelf: isMobile ? 'flex-end' : 'center'
                     }}>
                         {/* Header */}
-                        <div style={{ background: '#fff1f2', padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #fecdd3', flexShrink: 0 }}>
+                        <div style={{ background: '#fff1f2', padding: isMobile ? '1rem' : '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #fecdd3', flexShrink: 0 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <ShieldWarning size={28} weight="fill" color="#dc2626" />
                                 <div>
@@ -746,7 +757,7 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                             {isEditingIncident ? (
                                 /* ---- EDIT MODE ---- */
                                 <>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                                         <div>
                                             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '6px' }}>Hazard Type</label>
                                             <select value={editIncidentData.hazardType} onChange={e => setEditIncidentData(p => ({ ...p, hazardType: e.target.value }))}
@@ -782,7 +793,7 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                                             rows={3} style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 600, outline: 'none', resize: 'none', lineHeight: '1.5' }} />
                                     </div>
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                                         <div>
                                             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '6px' }}>Assigned To</label>
                                             <select value={editIncidentData.assignedTo} onChange={e => setEditIncidentData(p => ({ ...p, assignedTo: e.target.value }))}
@@ -847,7 +858,7 @@ const ProjectSiteDashboard = ({ setCurrentPage }) => {
                                         </div>
                                     )}
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', borderRadius: '16px', padding: '1.2rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', background: '#f8fafc', borderRadius: '16px', padding: '1.2rem' }}>
                                         {selectedIncident.assignedTo && <div><div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>Assigned To</div><div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>{selectedIncident.assignedTo}</div></div>}
                                         {selectedIncident.dueDate && <div><div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>Due Date</div><div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>{new Date(selectedIncident.dueDate).toLocaleDateString()}</div></div>}
                                         {selectedIncident.controlMeasures && <div><div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '4px' }}>Control Measure</div><div style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.9rem' }}>{selectedIncident.controlMeasures}</div></div>}

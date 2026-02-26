@@ -24,6 +24,13 @@ const ClientDashboard = () => {
     const [showTransactionHistory, setShowTransactionHistory] = useState(false);
     const [showDocumentModal, setShowDocumentModal] = useState(false);
     const [expenses, setExpenses] = useState([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Dynamic Data States
     const [financials, setFinancials] = useState({
@@ -282,7 +289,7 @@ const ClientDashboard = () => {
     );
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ padding: isMobile ? '1rem' : '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
             {/* Header */}
             <div style={{ marginBottom: '2.5rem' }}>
                 <h1 style={{ color: '#0f172a', marginBottom: '0.5rem', fontWeight: 800, fontSize: '2rem' }}>Welcome Home, Client</h1>
@@ -292,7 +299,7 @@ const ClientDashboard = () => {
             </div>
 
             {/* Main Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '2rem' }}>
 
                 {/* Left Column */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -314,27 +321,29 @@ const ClientDashboard = () => {
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
-                            {/* Simple line behind steps */}
-                            <div style={{ position: 'absolute', top: '15px', left: '0', right: '0', height: '2px', background: '#e2e8f0', zIndex: 0 }}></div>
+                        <div style={{ overflowX: 'auto', paddingBottom: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', minWidth: isMobile ? '600px' : 'auto' }}>
+                                {/* Simple line behind steps */}
+                                <div style={{ position: 'absolute', top: '15px', left: '0', right: '0', height: '2px', background: '#e2e8f0', zIndex: 0 }}></div>
 
-                            {timeline.length > 0 ? timeline.map((step) => (
-                                <div key={step._id} style={{ position: 'relative', zIndex: 1, textAlign: 'center', width: `${100 / Math.max(1, timeline.length)}%` }}>
-                                    <div style={{
-                                        width: '32px', height: '32px', borderRadius: '50%', margin: '0 auto 10px',
-                                        background: step.status === 'Completed' ? '#16a34a' : step.status === 'In Progress' ? '#2563eb' : 'white',
-                                        border: `2px solid ${step.status === 'Completed' ? '#16a34a' : step.status === 'In Progress' ? '#2563eb' : '#cbd5e1'}`,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
-                                    }}>
-                                        {step.status === 'Completed' && <CheckCircle size={16} weight="bold" />}
-                                        {step.status === 'In Progress' && <Clock size={16} weight="bold" />}
+                                {timeline.length > 0 ? timeline.map((step) => (
+                                    <div key={step._id} style={{ position: 'relative', zIndex: 1, textAlign: 'center', width: `${100 / Math.max(1, timeline.length)}%` }}>
+                                        <div style={{
+                                            width: '32px', height: '32px', borderRadius: '50%', margin: '0 auto 10px',
+                                            background: step.status === 'Completed' ? '#16a34a' : step.status === 'In Progress' ? '#2563eb' : 'white',
+                                            border: `2px solid ${step.status === 'Completed' ? '#16a34a' : step.status === 'In Progress' ? '#2563eb' : '#cbd5e1'}`,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
+                                        }}>
+                                            {step.status === 'Completed' && <CheckCircle size={16} weight="bold" />}
+                                            {step.status === 'In Progress' && <Clock size={16} weight="bold" />}
+                                        </div>
+                                        <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e293b' }}>{step.title}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{new Date(step.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</div>
                                     </div>
-                                    <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e293b' }}>{step.title}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{new Date(step.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</div>
-                                </div>
-                            )) : (
-                                <div style={{ textAlign: 'center', width: '100%', color: '#94a3b8', fontSize: '0.85rem', padding: '10px' }}>No milestones scheduled yet.</div>
-                            )}
+                                )) : (
+                                    <div style={{ textAlign: 'center', width: '100%', color: '#94a3b8', fontSize: '0.85rem', padding: '10px' }}>No milestones scheduled yet.</div>
+                                )}
+                            </div>
                         </div>
                     </FeatureCard>
 
@@ -345,7 +354,7 @@ const ClientDashboard = () => {
                         action="Transaction History"
                         onActionClick={() => setShowTransactionHistory(true)}
                     >
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
                             <div style={{ padding: '15px', background: '#f0fdf4', borderRadius: '12px', border: '1px solid #dcfce7' }}>
                                 <div style={{ fontSize: '0.8rem', color: '#166534', fontWeight: 600 }}>Total Budget</div>
                                 <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#14532d' }}>{financials.totalBudget}</div>

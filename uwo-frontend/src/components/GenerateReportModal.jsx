@@ -71,7 +71,7 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
                     Observations gathered from site log 24-B. Structural compliance verified for current phase.
                 </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="desktop-only-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <div style={{ padding: '10px', background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: '8px', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#991b1b' }}>APPROVAL STATUS</div>
                     <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#ef4444' }}>PENDING REVIEW</div>
@@ -163,7 +163,7 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
     const renderContent = () => {
         if (step === 1) {
             return (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', padding: '5px' }}>
+                <div className="report-grid-2" style={{ gap: '1rem', padding: '5px' }}>
                     {reportTypes.map((type) => (
                         <button key={type.id} onClick={() => { setReportType(type.id); setStep(2); }} className="type-card" style={{ '--accent': type.color }}>
                             <div className="type-icon">{type.icon}</div>
@@ -179,9 +179,9 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
         }
 
         return (
-            <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '2rem' }}>
+            <div className="report-step-2-layout" style={{ gap: '2rem' }}>
                 {/* Configuration Panel */}
-                <div style={{ borderRight: '1px solid #e2e8f0', paddingRight: '2rem' }}>
+                <div className="report-sidebar" style={{ borderRight: '1px solid #e2e8f0', paddingRight: '2rem' }}>
                     <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '1.25rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <CalendarBlank size={18} weight="bold" /> REPORT FILTERS
                     </h4>
@@ -194,7 +194,7 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
                         </select>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '10px' }} className="form-group">
+                    <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '10px' }} className="form-group form-group-mobile-grid">
                         <div>
                             <label>REPORT FREQUENCY</label>
                             <select className="small-select" value={config.range} onChange={(e) => setConfig({ ...config, range: e.target.value })}>
@@ -243,7 +243,7 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
                 </div>
 
                 {/* Preview Panel */}
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#64748b', margin: 0 }}>OFFICIAL DOCUMENT PREVIEW</h4>
                         <span style={{ fontSize: '0.7rem', fontWeight: 800, background: '#f8fafc', border: '1px solid #e2e8f0', padding: '4px 12px', borderRadius: '20px' }}>DRAFT v1.2</span>
@@ -263,10 +263,13 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
 
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1200, backdropFilter: 'blur(10px)' }}>
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} style={{ width: step === 1 ? '800px' : '1100px', maxHeight: '92vh', background: 'white', borderRadius: '32px', overflow: 'hidden', boxShadow: '0 40px 80px -15px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <style>{`
+                .report-modal-body * { box-sizing: border-box; }
+            `}</style>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className={`report-modal-body ${step === 1 ? 'step-1' : 'step-2'}`} style={{ maxHeight: '92vh', background: 'white', borderRadius: '32px', overflow: 'hidden', boxShadow: '0 40px 80px -15px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
 
                 {/* Header Toolset */}
-                <div style={{ padding: '1.25rem 2rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fcfcfe' }}>
+                <div className="report-header-top" style={{ padding: '1.25rem 2rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fcfcfe', flexWrap: 'wrap', gap: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                         <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 10px rgba(37, 99, 235, 0.3)' }}>
                             <FileText size={24} weight="fill" />
@@ -280,8 +283,10 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
                             </div>
                         </div>
                     </div>
-                    {step === 2 && <button onClick={() => setStep(1)} className="btn-back">← Back to Selection</button>}
-                    <button onClick={onClose} style={{ width: '36px', height: '36px', borderRadius: '50%', border: 'none', background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} weight="bold" /></button>
+                    <div className="header-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        {step === 2 && <button onClick={() => setStep(1)} className="btn-back">← Back</button>}
+                        <button onClick={onClose} className="modal-close-btn" style={{ width: '36px', height: '36px', borderRadius: '50%', border: 'none', background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} weight="bold" /></button>
+                    </div>
                 </div>
 
                 {/* Content Area */}
@@ -291,14 +296,14 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
 
                 {/* Submit Workflow Footer */}
                 {step === 2 && (
-                    <div style={{ padding: '1.5rem 2rem', background: '#f8fafc', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="report-footer" style={{ padding: '1.5rem 2rem', background: '#f8fafc', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#64748b', fontSize: '0.8rem', fontWeight: 800 }}>
-                            <PaperPlaneTilt size={20} weight="bold" color="#2563eb" /> AUTO-NOTIFY BUILDER ON SUBMIT
+                            <PaperPlaneTilt size={20} weight="bold" color="#2563eb" style={{ flexShrink: 0 }} /> AUTO-NOTIFY BUILDER ON SUBMIT
                         </div>
-                        <div style={{ display: 'flex', gap: '12px' }}>
-                            <button className="btn-secondary" style={{ width: '120px' }}>Save Draft</button>
-                            <button onClick={handleGenerate} className="btn-primary" disabled={isGenerating || !config.project} style={{ minWidth: '220px', background: isGenerating ? '#94a3b8' : '#2563eb' }}>
-                                {isGenerating ? 'Structuring Report...' : `Submit for Review (${config.format})`}
+                        <div className="report-footer-actions" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                            <button className="btn-secondary w-full-mobile" style={{ minWidth: '120px', flex: 1 }}>Save Draft</button>
+                            <button onClick={handleGenerate} className="btn-primary w-full-mobile" disabled={isGenerating || !config.project} style={{ minWidth: '220px', flex: 2, background: isGenerating ? '#94a3b8' : '#2563eb', justifyContent: 'center' }}>
+                                {isGenerating ? 'Structuring Report...' : `Submit`}
                                 {!isGenerating && <DownloadSimple size={20} weight="bold" />}
                             </button>
                         </div>
@@ -322,8 +327,51 @@ const GenerateReportModal = ({ onClose, projects = [] }) => {
                 .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 8px 12px; border-bottom: 1px solid #f8fafc; font-size: 0.8rem; }
                 .preview-text-block { padding: 12px; background: #fcfcfe; border-radius: 10px; border: 1px solid #f1f5f9; margin-bottom: 10px; }
                 .btn-primary { padding: 12px 24px; border-radius: 14px; color: #fff; font-weight: 800; display: flex; align-items: center; gap: 10px; border: none; cursor: pointer; transition: all 0.2s; }
-                .btn-secondary { padding: 12px 24px; border-radius: 14px; background: #fff; border: 1.5px solid #e2e8f0; color: #475569; font-weight: 800; cursor: pointer; }
+                .btn-secondary { padding: 12px 24px; border-radius: 14px; background: #fff; border: 1.5px solid #e2e8f0; color: #475569; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; }
                 .btn-back { background: transparent; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: #64748b; cursor: pointer; }
+
+                .report-modal-body { width: 100%; transition: width 0.3s; }
+                .report-modal-body.step-1 { max-width: 800px; width: 95vw; }
+                .report-modal-body.step-2 { max-width: 1100px; width: 95vw; }
+                .report-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); }
+                .report-step-2-layout { display: grid; grid-template-columns: 320px 1fr; }
+
+                @media (max-width: 1024px) {
+                    .report-modal-body.step-2 { max-width: 95vw; }
+                    .report-grid-2 { grid-template-columns: repeat(2, 1fr); }
+                    .report-step-2-layout { grid-template-columns: 1fr; }
+                    .report-sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-right: none !important; border-bottom: 1px solid #e2e8f0; padding-right: 0 !important; padding-bottom: 2rem; margin-bottom: 2rem; }
+                    .report-sidebar > h4 { grid-column: span 2; }
+                }
+
+                @media (max-width: 768px) {
+                    .report-modal-body {
+                        max-width: 100vw !important; height: 100vh !important; max-height: 100vh !important; border-radius: 0 !important;
+                    }
+                    .report-header-top {
+                        padding: 1rem !important;
+                    }
+                    .header-actions {
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        z-index: 10;
+                    }
+                    .report-grid-2 { grid-template-columns: 1fr; }
+                    .report-sidebar { grid-template-columns: 1fr; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: none !important; }
+                    .report-sidebar > h4 { grid-column: span 1; }
+                    .form-group-mobile-grid { grid-template-columns: 1fr !important; }
+                    .report-footer { flex-direction: column; gap: 1rem; align-items: stretch !important; padding: 1rem !important; }
+                    .report-footer-actions { flex-direction: column; width: 100%; }
+                    .report-footer-actions > button { width: 100% !important; flex: none !important; }
+                    .w-full-mobile { width: 100%; justify-content: center; }
+                    .type-card { padding: 1rem; }
+                    .report-canvas { display: flex; flex-direction: column; overflow-x: auto; min-width: 0; }
+                    .preview-stat-block { padding: 10px; }
+                    .preview-table { overflow-x: auto; }
+                    .table-row-h, .table-row { min-width: 300px; }
+                    .desktop-only-grid { grid-template-columns: 1fr !important; }
+                }
             `}</style>
         </div>
     );

@@ -35,7 +35,7 @@ class NotificationService {
         'milestone': ['client', 'admin', 'project_site', 'civil_engineer', 'builder'],
         'schedule_delay': ['client', 'admin', 'civil_engineer', 'builder'],
         'system': ['admin', 'builder', 'civil_engineer', 'client'],
-        'user_created': ['admin', 'builder', 'civil_engineer', 'project_site']
+        'user_created': ['admin']
     };
 
     /**

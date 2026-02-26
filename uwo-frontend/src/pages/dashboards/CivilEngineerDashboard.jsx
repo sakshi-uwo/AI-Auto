@@ -26,9 +26,16 @@ const CivilEngineerDashboard = () => {
     const [showRaiseRequestModal, setShowRaiseRequestModal] = useState(false);
     const [showUploadDrawingModal, setShowUploadDrawingModal] = useState(false);
     const [showChecklistModal, setShowChecklistModal] = useState(false);
-    const [reviewItem, setReviewItem] = useState(null); // null = closed, object = open with item
+    const [reviewItem, setReviewItem] = useState(null);
     const [showAnalysisModal, setShowAnalysisModal] = useState(false);
     const [showGenerateReportModal, setShowGenerateReportModal] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Mock data for new features
     const [drawings] = useState([
@@ -185,16 +192,20 @@ const CivilEngineerDashboard = () => {
     const FeatureCard = ({ title, icon, children, action, onAction }) => (
         <div className="dashboard-card" style={{
             background: 'white',
-            padding: '1.5rem',
+            padding: isMobile ? '1rem' : '1.5rem',
             borderRadius: '20px',
             border: '1px solid #f0f0f0',
             height: '100%',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            width: '100%',
+            boxSizing: 'border-box',
+            overflow: 'hidden'
         }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', color: '#1a1a1a', margin: 0 }}>
-                    {icon} {title}
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '1.2rem', gap: isMobile ? '10px' : '0' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', color: '#1a1a1a', margin: 0, flexWrap: 'wrap' }}>
+                    {icon}
+                    <span style={{ flex: 1, minWidth: 0, wordBreak: 'break-word' }}>{title}</span>
                 </h3>
                 {action && (
                     <button
@@ -252,10 +263,10 @@ const CivilEngineerDashboard = () => {
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ padding: isMobile ? '1rem 0.5rem' : '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif', width: '100%', boxSizing: 'border-box', overflowX: 'hidden' }}>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', background: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)' }}>
-                <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', marginBottom: '3rem', background: 'white', padding: isMobile ? '1rem' : '2rem', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)', gap: '1rem' }}>
+                <div style={{ width: isMobile ? '100%' : 'auto', flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <h1 style={{ fontSize: '2.25rem', fontWeight: 900, color: '#0f172a', margin: 0, letterSpacing: '-1px' }}>
                             Civil Engineer Dashboard
@@ -266,20 +277,20 @@ const CivilEngineerDashboard = () => {
                     </p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
                     {/* Action Buttons */}
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
                         <button
                             onClick={() => setShowRaiseRequestModal(true)}
                             className="action-btn"
-                            style={{ background: '#2563eb', color: 'white', padding: '12px 24px', height: 'auto' }}
+                            style={{ background: '#2563eb', color: 'white', padding: '12px 24px', height: 'auto', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
                         >
                             <Megaphone size={20} weight="bold" /> Raise Request
                         </button>
                         <button
                             className="action-btn"
                             onClick={() => setShowUploadDrawingModal(true)}
-                            style={{ background: 'white', border: '1px solid #e2e8f0', color: '#1e293b', padding: '12px 24px', height: 'auto' }}
+                            style={{ background: 'white', border: '1px solid #e2e8f0', color: '#1e293b', padding: '12px 24px', height: 'auto', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
                         >
                             <UploadSimple size={20} weight="bold" /> Upload Drawing
                         </button>
@@ -288,7 +299,7 @@ const CivilEngineerDashboard = () => {
             </div>
 
             {/* Quick Stats Row */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
                 {[
                     { label: 'Assigned Projects', value: projects.length, icon: <Blueprint size={32} weight="duotone" color="#2563eb" />, bg: '#eff6ff' },
                     { label: 'Pending Drawings', value: '4', icon: <FilePdf size={32} weight="duotone" color="#dc2626" />, bg: '#fef2f2' },
@@ -306,22 +317,22 @@ const CivilEngineerDashboard = () => {
             </div>
 
             {/* Main Grid Layout */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+            <div className="dashboard-main-grid" style={{ display: 'grid', gap: '2rem' }}>
 
                 {/* 1. View Assigned Projects */}
-                <div style={{ gridColumn: 'span 2' }}>
+                <div className="dashboard-span-2">
                     <FeatureCard
                         title="Assigned Projects Status"
                         icon={<Kanban size={24} color="var(--pivot-blue)" weight="fill" />}
                         action="View All Projects"
                     >
                         {projects.length === 0 && !loading ? (
-                            <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af', background: '#f8fafc', borderRadius: '16px' }}>
+                            <div style={{ textAlign: 'center', padding: isMobile ? '2rem 1rem' : '3rem', color: '#9ca3af', background: '#f8fafc', borderRadius: '16px' }}>
                                 <Blueprint size={40} weight="duotone" />
-                                <p style={{ marginTop: '1rem', fontWeight: 600 }}>No active projects assigned.</p>
+                                <p style={{ marginTop: '1rem', fontWeight: 600, fontSize: isMobile ? '0.9rem' : '1rem' }}>No active projects assigned.</p>
                             </div>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                                 {projects.slice(0, 4).map(p => (
                                     <div key={p._id} style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '18px', border: '1px solid #e2e8f0', transition: 'all 0.2s' }} className="project-sub-card">
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
@@ -329,7 +340,7 @@ const CivilEngineerDashboard = () => {
                                             <StatusBadge status={p.status || 'Active'} />
                                         </div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' }}>
-                                            <div style={{ flex: 1, height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                                            <div style={{ flex: 1, minWidth: 0, height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                                                 <div style={{ width: '65%', height: '100%', background: '#2563eb', borderRadius: '4px' }}></div>
                                             </div>
                                             <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a' }}>65%</span>
@@ -360,9 +371,9 @@ const CivilEngineerDashboard = () => {
                                 <div style={{ padding: '8px', background: '#fee2e2', borderRadius: '8px', color: '#dc2626' }}>
                                     <FilePdf size={20} weight="fill" />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b' }}>{d.name}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{d.project} • {d.date}</div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b', wordBreak: 'break-word' }}>{d.name}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#64748b', wordBreak: 'break-word' }}>{d.project} • {d.date}</div>
                                 </div>
                                 <StatusBadge status={d.status} />
                             </div>
@@ -379,10 +390,10 @@ const CivilEngineerDashboard = () => {
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                         {boqItems.slice(0, 3).map(item => (
-                            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7' }}>
-                                <div>
-                                    <div style={{ fontWeight: 600, color: '#065f46', fontSize: '0.88rem' }}>{item.item}</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#059669' }}>{item.quantity} {item.unit} • {item.budget}</div>
+                            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#f0fdf4', borderRadius: '10px', border: '1px solid #dcfce7', flexWrap: 'wrap', gap: '10px' }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontWeight: 600, color: '#065f46', fontSize: '0.88rem', wordBreak: 'break-word' }}>{item.item}</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#059669', wordBreak: 'break-word' }}>{item.quantity} {item.unit} • {item.budget}</div>
                                 </div>
                                 <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '3px 8px', borderRadius: '8px', background: item.status === 'On Track' ? '#dcfce7' : '#fee2e2', color: item.status === 'On Track' ? '#15803d' : '#dc2626' }}>{item.status}</span>
                             </div>
@@ -521,8 +532,8 @@ const CivilEngineerDashboard = () => {
                                 <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <CheckCircle size={18} color="#7c3aed" weight="bold" />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>Curing Checklist - Block A</div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: '0.85rem', fontWeight: 600, wordBreak: 'break-word' }}>Curing Checklist - Block A</div>
                                     <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Submitted today</div>
                                 </div>
                                 <button
@@ -562,7 +573,7 @@ const CivilEngineerDashboard = () => {
                 </div>
 
                 {/* 10. Requests Tracking & History */}
-                <div style={{ gridColumn: 'span 3' }}>
+                <div className="dashboard-span-3">
                     <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
                         <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -583,7 +594,7 @@ const CivilEngineerDashboard = () => {
                                 <p style={{ fontSize: '0.85rem', marginTop: '4px' }}>Click "Raise Request" to submit your first technical request.</p>
                             </div>
                         ) : (
-                            <div style={{ overflowX: 'auto' }}>
+                            <div className="table-wrapper" style={{ overflowX: 'auto', maxWidth: '100%' }}>
                                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                                     <thead>
                                         <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
@@ -640,7 +651,7 @@ const CivilEngineerDashboard = () => {
                 </div>
 
                 {/* 11. Activity Intensity Heatmap */}
-                <div style={{ gridColumn: 'span 3' }}>
+                <div className="dashboard-span-3">
                     <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                             <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -663,41 +674,43 @@ const CivilEngineerDashboard = () => {
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 1fr)', gap: '10px' }}>
-                            {Array.from({ length: 14 }).map((_, i) => (
-                                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
-                                        {Array.from({ length: 5 }).map((_, j) => {
-                                            const active = Math.random() > 0.4;
-                                            const intensity = Math.random();
-                                            return (
-                                                <div
-                                                    key={j}
-                                                    style={{
-                                                        height: '24px',
-                                                        borderRadius: '4px',
-                                                        background: active ? `rgba(37, 99, 235, ${0.4 + intensity * 0.6})` : '#f1f5f9',
-                                                        border: active ? '1px solid rgba(255,255,255,0.2)' : 'none',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                    title={`Activity Block ${j + 1}, Day ${i + 1}`}
-                                                ></div>
-                                            );
-                                        })}
+                        <div style={{ overflowX: 'auto', paddingBottom: '10px', maxWidth: '100%' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, minmax(40px, 1fr))', gap: '10px', minWidth: 'max-content' }}>
+                                {Array.from({ length: 14 }).map((_, i) => (
+                                    <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
+                                            {Array.from({ length: 5 }).map((_, j) => {
+                                                const active = Math.random() > 0.4;
+                                                const intensity = Math.random();
+                                                return (
+                                                    <div
+                                                        key={j}
+                                                        style={{
+                                                            height: '24px',
+                                                            borderRadius: '4px',
+                                                            background: active ? `rgba(37, 99, 235, ${0.4 + intensity * 0.6})` : '#f1f5f9',
+                                                            border: active ? '1px solid rgba(255,255,255,0.2)' : 'none',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                        title={`Activity Block ${j + 1}, Day ${i + 1}`}
+                                                    ></div>
+                                                );
+                                            })}
+                                        </div>
+                                        <span style={{ fontSize: '0.65rem', fontWeight: 600, color: '#94a3b8', textAlign: 'center' }}>D{14 - i}</span>
                                     </div>
-                                    <span style={{ fontSize: '0.65rem', fontWeight: 600, color: '#94a3b8', textAlign: 'center' }}>D{14 - i}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#64748b', textAlign: 'center', fontStyle: 'italic' }}>
-                            Visualizing workforce and equipment engagement across Block A to Block E.
+                                ))}
+                            </div>
+                            <div style={{ marginTop: '1rem', fontSize: '0.75rem', color: '#64748b', textAlign: 'center', fontStyle: 'italic' }}>
+                                Visualizing workforce and equipment engagement across Block A to Block E.
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* 9. Engineer Reports */}
-                <div style={{ gridColumn: 'span 3' }}>
-                    <div style={{ background: '#0f172a', padding: '1.5rem', borderRadius: '20px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="dashboard-span-3">
+                    <div style={{ background: '#0f172a', padding: '1.5rem', borderRadius: '20px', color: 'white', display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '1.5rem' : '0', justifyContent: 'space-between' }}>
                         <div>
                             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <FileText size={24} weight="duotone" />
@@ -707,18 +720,18 @@ const CivilEngineerDashboard = () => {
                                 Generate comprehensive daily, weekly, and milestone reports. Track structural health, material consumption, and workforce efficiency.
                             </p>
                         </div>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '1rem', width: isMobile ? '100%' : 'auto' }}>
                             <button
                                 onClick={() => setShowAnalysisModal(true)}
-                                style={{ padding: '10px 20px', borderRadius: '10px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                style={{ padding: '10px 20px', borderRadius: '10px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
                             >
-                                View Analytics <ChartBar size={18} />
+                                Analysis <ChartBar size={18} />
                             </button>
                             <button
                                 onClick={() => setShowGenerateReportModal(true)}
-                                style={{ padding: '10px 20px', borderRadius: '10px', background: 'var(--pivot-blue)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                style={{ padding: '10px 20px', borderRadius: '10px', background: 'var(--pivot-blue)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
                             >
-                                Generate Report <CaretRight size={18} weight="bold" />
+                                Report <CaretRight size={18} weight="bold" />
                             </button>
                         </div>
                     </div>
@@ -758,6 +771,41 @@ const CivilEngineerDashboard = () => {
                 }
                 .request-row:hover {
                     background: #f0f7ff !important;
+                }
+                .dashboard-card-header-inner {
+                    flex: 1;
+                    min-width: 0;
+                    word-break: break-word;
+                }
+                .dashboard-main-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+                .dashboard-span-2 {
+                    grid-column: span 2;
+                    min-width: 0;
+                }
+                .dashboard-span-3 {
+                    grid-column: span 3;
+                    min-width: 0;
+                }
+                @media (max-width: 1024px) {
+                    .dashboard-main-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                    .dashboard-span-2, .dashboard-span-3 {
+                        grid-column: span 2;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .dashboard-main-grid {
+                        grid-template-columns: 1fr;
+                    }
+                    .dashboard-span-2, .dashboard-span-3 {
+                        grid-column: span 1;
+                    }
+                    .dashboard-card {
+                        padding: 1rem !important;
+                    }
                 }
             `}</style>
             {showRaiseRequestModal && (

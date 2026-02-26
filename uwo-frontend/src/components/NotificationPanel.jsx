@@ -23,6 +23,7 @@ const NotificationPanel = ({ notifications, onMarkRead, onSettingsClick }) => {
     return (
         <div style={{
             width: '400px',
+            maxWidth: 'calc(100vw - 32px)',
             background: '#ffffff',
             borderRadius: '16px',
             boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
@@ -30,7 +31,8 @@ const NotificationPanel = ({ notifications, onMarkRead, onSettingsClick }) => {
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            animation: 'fadeIn 0.2s ease-out'
+            animation: 'fadeIn 0.2s ease-out',
+            maxHeight: '85vh'
         }}>
             {/* Header */}
             <div style={{

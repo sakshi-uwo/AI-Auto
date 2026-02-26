@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Buildings, HouseLine, Tree, Waves, MapPin, Plus, X, CurrencyDollar, Calendar } from '@phosphor-icons/react';
+import { Buildings, HouseLine, Tree, Waves, MapPin, Plus, X, CurrencyDollar, Calendar, CaretLeft, Info } from '@phosphor-icons/react';
 import { projectService } from '../../services/api';
 import socketService from '../../services/socket';
 
@@ -48,7 +48,7 @@ const ProjectCard = ({ name, location, progress, totalUnits, availableUnits, sta
     );
 };
 
-const AddProjectModal = ({ isOpen, onClose, onSubmit }) => {
+const AddProjectModal = ({ isOpen, onClose, onSubmit, isMobile }) => {
     const [formData, setFormData] = useState({
         name: '',
         location: '',
@@ -93,15 +93,17 @@ const AddProjectModal = ({ isOpen, onClose, onSubmit }) => {
                     maxWidth: '900px',
                     width: '100%',
                     padding: '0',
-                    maxHeight: '90vh',
+                    maxHeight: isMobile ? '85vh' : '90vh',
                     overflowY: 'auto',
-                    background: '#f8f9fb'
+                    background: '#f8f9fb',
+                    borderRadius: isMobile ? '24px 24px 0 0' : '24px',
+                    alignSelf: isMobile ? 'flex-end' : 'center'
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
                 <div style={{
-                    padding: '2rem 2.5rem',
+                    padding: '1.5rem',
                     background: 'white',
                     borderBottom: '1px solid var(--glass-border)',
                     display: 'flex',
@@ -114,26 +116,27 @@ const AddProjectModal = ({ isOpen, onClose, onSubmit }) => {
                             background: '#e8f0fe',
                             border: 'none',
                             cursor: 'pointer',
-                            padding: '12px',
+                            padding: '10px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: '48px',
-                            height: '48px'
+                            width: '40px',
+                            height: '40px',
+                            flexShrink: 0
                         }}
                     >
                         <CaretLeft size={20} color="#0047AB" weight="bold" />
                     </button>
                     <div>
-                        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, marginBottom: '0.25rem', color: '#000' }}>Add New Project</h2>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--charcoal)', margin: 0 }}>Fill in the details to list a new real estate venture.</p>
+                        <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: 0, color: '#000' }}>Add New Project</h2>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--charcoal)', margin: 0 }} className="desktop-only">Fill in the details to list a new real estate venture.</p>
                     </div>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} style={{ padding: '2.5rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'white', padding: '2rem', borderRadius: 'var(--radius-lg)' }}>
+                <form onSubmit={handleSubmit} style={{ padding: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'white', padding: '1.5rem', borderRadius: 'var(--radius-lg)' }}>
                         {/* Project Name */}
                         <div>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.75rem', color: '#374151' }}>
@@ -161,7 +164,7 @@ const AddProjectModal = ({ isOpen, onClose, onSubmit }) => {
                         </div>
 
                         {/* Location and Price Range */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="grid-2-mobile-1" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                             <div>
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.75rem', color: '#374151' }}>
                                     <MapPin size={18} weight="duotone" />
@@ -265,7 +268,7 @@ const AddProjectModal = ({ isOpen, onClose, onSubmit }) => {
                         </div>
 
                         {/* Total Units and Available Units */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="grid-2-mobile-1" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                             <div>
                                 <label style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.75rem', color: '#374151', display: 'block' }}>
                                     Total Units
@@ -373,6 +376,13 @@ const Projects = () => {
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState('All');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -428,85 +438,61 @@ const Projects = () => {
         <div style={{ padding: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Active Projects</h1>
-                    <p style={{ color: 'var(--charcoal)', fontSize: '0.9rem', marginTop: '5px' }}>
-                        Manage construction sites. Showing {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
-                    </p>
+                    <h1 style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#0f172a', margin: 0 }} className="h1">Active Projects</h1>
+                    {!isMobile && (
+                        <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '6px', fontWeight: 500 }}>
+                            Manage construction sites. Showing {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+                        </p>
+                    )}
                 </div>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                    {['All', 'Active', 'Upcoming', 'Completed'].map((filter) => (
-                        <button
-                            key={filter}
-                            onClick={() => setActiveFilter(filter)}
-                            style={{
-                                background: activeFilter === filter ? 'var(--pivot-blue)' : 'var(--white)',
-                                color: activeFilter === filter ? 'var(--white)' : 'var(--soft-black)',
-                                border: '1px solid var(--glass-border)',
-                                padding: '8px 16px',
-                                borderRadius: 'var(--radius-md)',
-                                cursor: 'pointer',
-                                fontWeight: activeFilter === filter ? 700 : 500,
-                                transition: 'all 0.3s ease',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (activeFilter !== filter) {
-                                    e.currentTarget.style.background = 'var(--pivot-blue-soft)';
-                                    e.currentTarget.style.color = 'var(--pivot-blue)';
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (activeFilter !== filter) {
-                                    e.currentTarget.style.background = 'var(--white)';
-                                    e.currentTarget.style.color = 'var(--soft-black)';
-                                }
-                            }}
-                        >
-                            {filter}
-                            <span style={{
-                                padding: '2px 6px',
-                                borderRadius: '10px',
-                                fontSize: '0.7rem',
-                                background: activeFilter === filter ? 'rgba(255,255,255,0.2)' : 'var(--pivot-blue-soft)',
-                                color: activeFilter === filter ? 'white' : 'var(--pivot-blue)',
-                                fontWeight: 700
-                            }}>
-                                {getFilterCount(filter)}
-                            </span>
-                        </button>
-                    ))}
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+                    <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', flex: 1, scrollbarWidth: 'none' }} className="hide-scrollbar">
+                        {['All', 'Active', 'Upcoming', 'Completed'].map((filter) => (
+                            <button
+                                key={filter}
+                                onClick={() => setActiveFilter(filter)}
+                                style={{
+                                    background: activeFilter === filter ? 'var(--pivot-blue)' : 'var(--white)',
+                                    color: activeFilter === filter ? 'var(--white)' : 'var(--soft-black)',
+                                    border: '1px solid var(--glass-border)',
+                                    padding: '8px 16px',
+                                    borderRadius: 'var(--radius-md)',
+                                    cursor: 'pointer',
+                                    fontWeight: activeFilter === filter ? 700 : 500,
+                                    transition: 'all 0.3s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {filter}
+                            </button>
+                        ))}
+                    </div>
                     <button
                         onClick={() => setIsModalOpen(true)}
                         style={{
                             background: 'var(--pivot-blue)',
                             color: 'white',
                             border: 'none',
-                            padding: '10px 18px',
-                            borderRadius: 'var(--radius-md)',
+                            padding: '12px 24px',
+                            borderRadius: '14px',
                             cursor: 'pointer',
                             fontWeight: 700,
-                            fontSize: '0.9rem',
+                            fontSize: '0.95rem',
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             gap: '8px',
                             transition: 'all 0.3s ease',
-                            boxShadow: '0 2px 8px rgba(0,71,171,0.2)'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#003d99';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,71,171,0.3)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'var(--pivot-blue)';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,71,171,0.2)';
+                            boxShadow: '0 4px 12px rgba(0,71,171,0.25)',
+                            marginLeft: 'auto',
+                            width: 'auto'
                         }}
                     >
                         <Plus size={20} weight="bold" />
-                        Add Project
+                        <span className="desktop-only">Add Project</span><span className="mobile-only">Add</span>
                     </button>
                 </div>
             </div>
@@ -531,6 +517,7 @@ const Projects = () => {
 
             <AddProjectModal
                 isOpen={isModalOpen}
+                isMobile={isMobile}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleAddProject}
             />

@@ -134,10 +134,11 @@ const Chatbot = ({ user }) => {
     };
 
     return (
-        <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 1000, fontFamily: 'Inter, sans-serif' }}>
+        <div className="chatbot-container" style={{ position: 'fixed', zIndex: 1000, fontFamily: 'Inter, sans-serif' }}>
             {/* Chat Bubble */}
             {!isOpen && (
                 <div
+                    className="chatbot-bubble"
                     onClick={() => setIsOpen(true)}
                     style={{
                         width: '64px', height: '64px', borderRadius: '50%',
@@ -155,11 +156,9 @@ const Chatbot = ({ user }) => {
 
             {/* Chat Window */}
             {isOpen && (
-                <div style={{
-                    width: '380px', height: '550px',
+                <div className="chatbot-window" style={{
                     background: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(10px)',
-                    borderRadius: '24px',
                     display: 'flex', flexDirection: 'column',
                     boxShadow: '0 12px 48px rgba(0,0,0,0.15)',
                     border: '1px solid rgba(255,255,255,0.3)',
@@ -300,6 +299,15 @@ const Chatbot = ({ user }) => {
             )}
 
             <style>{`
+                .chatbot-container { bottom: 30px; right: 30px; }
+                .chatbot-window { width: 380px; height: 550px; border-radius: 24px; }
+                
+                @media (max-width: 768px) {
+                    .chatbot-container { bottom: 0; right: 0; width: 100%; height: 100%; pointer-events: none; }
+                    .chatbot-bubble { position: absolute; bottom: 20px; right: 20px; pointer-events: auto; }
+                    .chatbot-window { width: 100%; height: 100%; border-radius: 0; pointer-events: auto; }
+                }
+
                 @keyframes slideUp {
                     from { opacity: 0; transform: translateY(20px); }
                     to { opacity: 1; transform: translateY(0); }

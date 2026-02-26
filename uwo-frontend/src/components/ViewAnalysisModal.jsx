@@ -72,7 +72,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
     const renderProgressSection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+            <div className="analysis-grid-2">
                 <div className="stat-card">
                     <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#64748b', marginBottom: '1rem' }}>Overall Progress (Planned vs Actual)</div>
                     <div style={{ display: 'flex', flexDirection: 'center', gap: '1rem', marginBottom: '0.5rem', alignItems: 'center' }}>
@@ -102,9 +102,9 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                 </div>
             </div>
 
-            <div className="table-container">
+            <div className="table-container" style={{ overflowX: 'auto', maxWidth: '100%' }}>
                 <h4 style={{ margin: '0 0 1rem 0' }}>Activity-wise Completion Status</h4>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                     <thead>
                         <tr style={{ textAlign: 'left', borderBottom: '2px solid #f1f5f9' }}>
                             <th style={{ padding: '12px' }}>Activity</th>
@@ -135,9 +135,9 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
     const renderScheduleSection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div className="alert-box-warning">
-                <Info size={24} color="#d97706" />
-                <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Critical Path Delay Alert</div>
+                <Info size={24} color="#d97706" style={{ flexShrink: 0 }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', wordBreak: 'break-word' }}>Critical Path Delay Alert</div>
                     <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem' }}>Beam casting for Floor 1 is on the critical path and delayed by 4 days. Total project delay at risk: 6 days.</p>
                 </div>
             </div>
@@ -176,7 +176,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
     const renderResourcesSection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+            <div className="analysis-grid-3">
                 <div className="mini-card">
                     <Users size={24} weight="duotone" color="#2563eb" />
                     <div style={{ marginTop: '10px' }}>
@@ -225,8 +225,8 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className="table-container">
                 <h4 style={{ margin: '0 0 1.5rem 0' }}>BOQ vs Actual Material Utilization</h4>
-                <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
                         <thead>
                             <tr style={{ textAlign: 'left', borderBottom: '2px solid #f1f5f9' }}>
                                 <th style={{ padding: '12px' }}>Material</th>
@@ -287,7 +287,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
     const renderSafetySection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem' }}>
+            <div className="safety-grid" style={{ display: 'grid', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div className="stat-card">
                         <h4 style={{ margin: '0 0 1rem 0' }}>Risk Severity Distribution</h4>
@@ -316,7 +316,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div className="stat-card">
                         <h4 style={{ margin: '0 0 1rem 0' }}>Safety KPIs</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="analysis-grid-2" style={{ gap: '1rem' }}>
                             <div style={{ padding: '1rem', background: '#fef2f2', borderRadius: '16px' }}>
                                 <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#991b1b' }}>NEAR-MISSES</div>
                                 <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#ef4444' }}>04</div>
@@ -345,7 +345,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
             <div className="table-container">
                 <h4 style={{ margin: '0 0 1rem 0' }}>High-Risk Zone Identification</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                <div className="analysis-grid-3" style={{ gap: '1rem' }}>
                     {['Excavation Pit A', 'Tower 1 Roof', 'Material Elevator'].map(zone => (
                         <div key={zone} style={{ padding: '1rem', background: 'white', border: '1px solid #fee2e2', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <WarningCircle size={24} color="#ef4444" weight="fill" />
@@ -359,7 +359,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
     const renderCostSection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+            <div className="analysis-grid-4">
                 {[
                     { label: 'Rework Cost Est.', value: '$4,200', trend: '↑', color: '#ef4444' },
                     { label: 'Delay Impact', value: '$12,500', trend: '↑', color: '#ef4444' },
@@ -396,7 +396,7 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
     const renderIssuesSection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="analysis-grid-2">
                 <div className="stat-card">
                     <h4 style={{ margin: '0 0 1rem 0' }}>Instruction Compliance</h4>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '150px' }}>
@@ -428,19 +428,19 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                 </div>
             </div>
 
-            <div className="table-container">
+            <div className="table-container" style={{ overflowX: 'auto', maxWidth: '100%' }}>
                 <h4 style={{ margin: '0 0 1rem 0' }}>Escalation Analysis</h4>
                 {[
                     { issue: 'Slab reinforcement inspection rejected twice', days: '4 Days', level: 'Project Head' },
                     { issue: 'Concrete quality mismatch at Site B', days: '2 Days', level: 'Quality Manager' }
                 ].map((esc, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', marginBottom: '10px' }}>
-                        <WarningCircle size={24} color="#ef4444" weight="fill" />
-                        <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: 800, color: '#1e293b' }}>{esc.issue}</div>
+                    <div className="escalation-row flex-column-mobile" key={i} style={{ display: 'flex', alignItems: 'center', gap: '15px', padding: '15px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', marginBottom: '10px' }}>
+                        <WarningCircle size={24} color="#ef4444" weight="fill" style={{ flexShrink: 0 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 800, color: '#1e293b', wordBreak: 'break-word' }}>{esc.issue}</div>
                             <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Pending for {esc.days} • Escalated to: {esc.level}</div>
                         </div>
-                        <button className="btn-secondary">View Thread</button>
+                        <button className="btn-secondary w-full-mobile">View Thread</button>
                     </div>
                 ))}
             </div>
@@ -449,14 +449,14 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
 
     const renderComparisonSection = () => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="table-container">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div className="table-container view-analysis-compare-wrapper" style={{ overflowX: 'auto', maxWidth: '100%' }}>
+                <div className="view-analysis-compare-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                     <h4 style={{ margin: 0 }}>Site-to-Site Performance Comparison</h4>
-                    <button className="toolbar-btn" style={{ background: '#0f172a', color: 'white', border: 'none' }}>
+                    <button className="toolbar-btn w-full-mobile" style={{ background: '#0f172a', color: 'white', border: 'none' }}>
                         <GitDiff size={18} /> Generate Comparative Audit
                     </button>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '800px' }}>
                     {[
                         { site: 'Project Alpha - Block A', progress: 85, cost: -5, safety: 98, status: 'On Track' },
                         { site: 'Project Alpha - Block B', progress: 62, cost: 12, safety: 85, status: 'At Risk' },
@@ -528,13 +528,13 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                         { title: 'In-situ Concrete Optimization', desc: 'Swap to pre-mix for North wall to reduce site congestion.', icon: <CheckCircle size={18} /> },
                         { title: 'Resource Realignment (Steel)', desc: 'Shift 4 bar-benders to Block A to hit Friday milestone.', icon: <Users size={18} /> }
                     ].map((step, i) => (
-                        <div key={i} style={{ display: 'flex', gap: '12px', padding: '12px', background: '#f8fafc', borderRadius: '12px', alignItems: 'flex-start' }}>
+                        <div className="action-row flex-column-mobile" key={i} style={{ display: 'flex', gap: '12px', padding: '12px', background: '#f8fafc', borderRadius: '12px', alignItems: 'flex-start' }}>
                             <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{step.icon}</div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: '0.9rem', fontWeight: 800 }}>{step.title}</div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: '0.9rem', fontWeight: 800, wordBreak: 'break-word' }}>{step.title}</div>
                                 <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{step.desc}</div>
                             </div>
-                            <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.7rem' }}>Create Task</button>
+                            <button className="btn-secondary w-full-mobile" style={{ padding: '4px 10px', fontSize: '0.7rem' }}>Create Task</button>
                         </div>
                     ))}
                 </div>
@@ -568,16 +568,45 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
         }
     };
 
+    const renderRemarksPanel = (isMobile) => (
+        <div className={isMobile ? 'mobile-remarks' : 'desktop-remarks'} style={{ padding: '1.5rem', borderTop: isMobile ? '1px solid #e2e8f0' : 'none', background: isMobile ? '#f1f5f9' : 'transparent', marginTop: isMobile ? 'auto' : '0' }}>
+            <div style={{ background: isMobile ? 'white' : '#f8fafc', padding: '1rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', marginBottom: '8px' }}>ENGINEER REMARKS</div>
+                <textarea
+                    value={remarks}
+                    onChange={(e) => setRemarks(e.target.value)}
+                    placeholder="Add observations..."
+                    style={{ width: '100%', minHeight: '60px', border: 'none', background: 'transparent', fontSize: '0.75rem', outline: 'none', resize: 'none' }}
+                ></textarea>
+                <button className="btn-save-remarks" onClick={handlePostRemark}>Post Remarks</button>
+            </div>
+            {postedRemarks.length > 0 && (
+                <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {postedRemarks.map(rmk => (
+                        <div key={rmk.id} style={{ padding: '8px', background: 'white', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
+                            <p style={{ fontSize: '0.7rem', margin: '0 0 4px 0', color: '#1e293b' }}>{rmk.text}</p>
+                            <div style={{ fontSize: '0.6rem', color: '#94a3b8', fontWeight: 700 }}>{rmk.time}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1200, backdropFilter: 'blur(10px)' }}>
             <motion.div
                 initial={{ opacity: 0, y: 30, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                style={{ width: '1250px', height: '90vh', background: '#f8fafc', borderRadius: '28px', display: 'flex', overflow: 'hidden', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.4)' }}
+                className="analysis-modal-body"
+                style={{ background: '#f8fafc', borderRadius: '28px', display: 'flex', overflow: 'hidden', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.4)', position: 'relative' }}
             >
+                <button onClick={onClose} className="modal-close-btn" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '36px', height: '36px', borderRadius: '50%', background: 'white', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                    <X size={18} weight="bold" />
+                </button>
                 {/* Sidebar Navigation */}
-                <div style={{ width: '280px', background: 'white', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', padding: '1.5rem 0' }}>
-                    <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid #f1f5f9' }}>
+                <div className="analysis-sidebar" style={{ background: 'white', display: 'flex', flexDirection: 'column', padding: '1.5rem 0' }}>
+                    <div className="analysis-sidebar-header" style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid #f1f5f9' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--pivot-blue)' }}>
                             <ChartBar size={28} weight="fill" />
                             <h2 style={{ fontSize: '1.25rem', fontWeight: 900, margin: 0 }}>Deep Analysis</h2>
@@ -585,10 +614,11 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                         <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', marginTop: '4px' }}>Civil Engineer POV</p>
                     </div>
 
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
+                    <div className="analysis-sidebar-nav" style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
                         {sections.map(section => (
                             <button
                                 key={section.id}
+                                className="analysis-nav-btn"
                                 onClick={() => setActiveSection(section.id)}
                                 style={{
                                     width: '100%', padding: '12px 16px', borderRadius: '12px', border: 'none', background: activeSection === section.id ? '#eff6ff' : 'transparent',
@@ -604,36 +634,17 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                         ))}
                     </div>
 
-                    <div style={{ padding: '1.5rem', borderTop: '1px solid #f1f5f9' }}>
-                        <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', marginBottom: '8px' }}>ENGINEER REMARKS</div>
-                            <textarea
-                                value={remarks}
-                                onChange={(e) => setRemarks(e.target.value)}
-                                placeholder="Add observations..."
-                                style={{ width: '100%', minHeight: '60px', border: 'none', background: 'transparent', fontSize: '0.75rem', outline: 'none', resize: 'none' }}
-                            ></textarea>
-                            <button className="btn-save-remarks" onClick={handlePostRemark}>Post Remarks</button>
-                        </div>
-                        {postedRemarks.length > 0 && (
-                            <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                {postedRemarks.map(rmk => (
-                                    <div key={rmk.id} style={{ padding: '8px', background: 'white', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
-                                        <p style={{ fontSize: '0.7rem', margin: '0 0 4px 0', color: '#1e293b' }}>{rmk.text}</p>
-                                        <div style={{ fontSize: '0.6rem', color: '#94a3b8', fontWeight: 700 }}>{rmk.time}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                    <div className="analysis-sidebar-footer" style={{ borderTop: '1px solid #f1f5f9' }}>
+                        {renderRemarksPanel(false)}
                     </div>
                 </div>
 
                 {/* Main Content Area */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div className="analysis-main-area" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
                     {/* Toolbar with Filters */}
-                    <div style={{ padding: '1rem 2rem', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div className="analysis-toolbar" style={{ padding: '1rem 2rem', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="analysis-toolbar-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                            <div className="analysis-filters" style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <select
                                     className="filter-select"
                                     value={filters.project}
@@ -662,8 +673,8 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                                 </select>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <button className="toolbar-btn"><MagnifyingGlass weight="bold" /> Drill Down</button>
+                            <div className="analysis-actions" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                <button className="toolbar-btn w-full-mobile"><MagnifyingGlass weight="bold" /> Drill Down</button>
                                 <button className="toolbar-btn" onClick={handleExport} disabled={isExporting}>
                                     {isExporting ? <Clock weight="bold" /> : <DownloadSimple weight="bold" />}
                                     {isExporting ? 'Exporting...' : 'Export Report'}
@@ -676,9 +687,6 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                                 >
                                     {isSharing ? <Clock weight="bold" /> : <ShareNetwork weight="bold" />}
                                     {isSharing ? 'Sharing...' : 'Share Insights'}
-                                </button>
-                                <button onClick={onClose} style={{ width: '36px', height: '36px', borderRadius: '50%', border: 'none', background: '#f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <X size={18} weight="bold" />
                                 </button>
                             </div>
                         </div>
@@ -709,16 +717,22 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                     </div>
 
                     {/* Module Render */}
-                    <div style={{ flex: 1, overflowY: 'auto', padding: '2.5rem' }}>
-                        <div style={{ maxWidth: '950px', margin: '0 auto' }}>
+                    <div className="analysis-content-padding" style={{ flex: 1, overflowY: 'auto', padding: '2.5rem' }}>
+                        <div style={{ maxWidth: '950px', margin: '0 auto', minWidth: 0 }}>
                             <h1 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a', margin: '0 0 2rem 0' }}>{sections.find(s => s.id === activeSection)?.label}</h1>
                             {renderContent()}
                         </div>
                     </div>
+                    {renderRemarksPanel(true)}
                 </div>
             </motion.div>
 
             <style>{`
+                .analysis-modal-body * {
+                    box-sizing: border-box;
+                }
+                .desktop-remarks { display: block; }
+                .mobile-remarks { display: none; }
                 .stat-card {
                     background: white;
                     padding: 1.5rem;
@@ -775,7 +789,145 @@ const ViewAnalysisModal = ({ onClose, projects = [] }) => {
                 .alert-box-warning {
                     padding: 1rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 16px; display: flex; gap: 1rem; color: #92400e;
                 }
+
+                .analysis-modal-body {
+                    width: 1250px;
+                    max-width: 95vw;
+                    height: 90vh;
+                    flex-direction: row;
+                }
+                .analysis-sidebar {
+                    width: 280px;
+                    border-right: 1px solid #e2e8f0;
+                    flex-shrink: 0;
+                }
+                .safety-grid { grid-template-columns: 1.2fr 1fr; }
+                .analysis-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+                .analysis-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+                .analysis-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+                @media (max-width: 1024px) {
+                    .analysis-modal-body { width: 95vw; }
+                    .analysis-sidebar { width: 220px; }
+                    .safety-grid { grid-template-columns: 1fr; }
+                    .analysis-grid-4 { grid-template-columns: repeat(2, 1fr); }
+                    .analysis-grid-3 { grid-template-columns: repeat(2, 1fr); }
+                    .analysis-toolbar { padding: 1rem !important; }
+                    .analysis-filters { width: 100%; }
+                }
+
+                @media (max-width: 768px) {
+                    .analysis-modal-body {
+                        flex-direction: column;
+                        max-width: 100vw;
+                        height: 100vh;
+                        border-radius: 0;
+                    }
+                    .modal-close-btn {
+                        top: 1rem !important;
+                        right: 1rem !important;
+                        background: #f1f5f9 !important;
+                    }
+                    .analysis-sidebar {
+                        width: 100%;
+                        border-right: none;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding: 1rem 0 0 0 !important;
+                        flex-shrink: 0;
+                        z-index: 5;
+                    }
+                    .analysis-sidebar-header {
+                        padding: 0 1rem 1rem !important;
+                        padding-right: 3rem !important;
+                    }
+                    .analysis-sidebar-nav {
+                        display: flex;
+                        flex-direction: row;
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                        padding: 0.5rem 1rem !important;
+                        gap: 10px;
+                        flex: none !important;
+                    }
+                    .analysis-nav-btn {
+                        width: auto !important;
+                        white-space: nowrap;
+                        flex-shrink: 0;
+                        margin-bottom: 0 !important;
+                    }
+                    .analysis-sidebar-footer {
+                        display: none !important;
+                    }
+                    .desktop-remarks {
+                        display: none !important;
+                    }
+                    .mobile-remarks {
+                        display: block !important;
+                        width: 100%;
+                        flex-shrink: 0;
+                    }
+                    .analysis-main-area {
+                        overflow-y: auto;
+                    }
+                    .analysis-toolbar {
+                        padding: 1rem !important;
+                    }
+                    .analysis-toolbar-inner {
+                        flex-direction: column;
+                        gap: 1rem;
+                        align-items: stretch !important;
+                    }
+                    .analysis-filters {
+                        display: grid !important;
+                        grid-template-columns: repeat(3, 1fr) !important;
+                        gap: 8px !important;
+                        width: 100%;
+                    }
+                    .filter-select {
+                        width: 100%;
+                        padding: 8px 4px;
+                        font-size: 0.70rem;
+                    }
+                    .analysis-actions {
+                        display: flex;
+                        flex-direction: row !important;
+                        flex-wrap: wrap !important;
+                        gap: 8px !important;
+                        width: 100%;
+                    }
+                    .analysis-actions > button {
+                        flex: 1 1 calc(33.333% - 8px);
+                        justify-content: center;
+                        padding: 8px 4px !important;
+                        font-size: 0.70rem !important;
+                    }
+                    .analysis-grid-2, .analysis-grid-3, .analysis-grid-4 {
+                        grid-template-columns: 1fr;
+                    }
+                    .analysis-content-padding {
+                        padding: 1rem !important;
+                        overflow-y: visible !important;
+                        flex: none !important;
+                    }
+                    .w-full-mobile {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                    .flex-column-mobile {
+                        flex-direction: column;
+                        align-items: flex-start !important;
+                    }
+                    .view-analysis-compare-header {
+                        flex-direction: column;
+                        gap: 1rem;
+                        align-items: flex-start !important;
+                    }
+                    .view-analysis-compare-wrapper {
+                        padding: 1rem;
+                    }
+                }
             `}</style>
+            {/* Modal is injected globally via Portal or fixed pos */}
         </div>
     );
 };

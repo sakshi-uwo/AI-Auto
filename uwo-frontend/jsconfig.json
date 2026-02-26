@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "forceConsistentCasingInFileNames": false,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "jsx": "react",
+        "allowJs": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "watch": [
+        "."
+    ],
+    "ext": "js,mjs,cjs,json",
+    "ignore": [
+        "node_modules",
+        "uploads",
+        "*.log",
+        ".git",
+        ".env",
+        "debug_*.js",
+        "out.txt",
+        "out2.txt"
+    ],
+    "delay": "2500"
+}

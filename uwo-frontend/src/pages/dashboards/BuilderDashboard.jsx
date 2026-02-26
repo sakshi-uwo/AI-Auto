@@ -27,6 +27,13 @@ const BuilderDashboard = () => {
     const [subContractors, setSubContractors] = useState([]);
     const [financialSummary, setFinancialSummary] = useState({ totalBudget: 0, totalSpent: 0 });
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const inventoryAlerts = [
         { id: 1, item: 'Cement Bags', status: 'Low Stock', project: 'Skyline Towers' },
@@ -145,20 +152,21 @@ const BuilderDashboard = () => {
     );
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif', background: '#f8fafc', minHeight: '100vh' }}>
+        <div style={{ padding: isMobile ? '1rem' : '2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: 'Inter, sans-serif', background: '#f8fafc', minHeight: '100vh' }}>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem' }}>
                 <div>
-                    <h2 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#003380', margin: 0 }}>Project Portfolio</h2>
+                    <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.4rem', fontWeight: 900, color: '#003380', margin: 0 }}>Project Portfolio</h2>
                     <p style={{ color: '#64748b', fontWeight: 600, fontSize: '1rem', marginTop: '4px' }}>Manage your construction projects and resources</p>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
                     <button
                         onClick={() => setShowUploadDocsModal(true)}
                         style={{
-                            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 24px',
                             background: 'white', color: '#003380', border: '1px solid #003380',
-                            borderRadius: '12px', fontWeight: 700, cursor: 'pointer'
+                            borderRadius: '12px', fontWeight: 700, cursor: 'pointer',
+                            flex: isMobile ? 1 : 'initial'
                         }}
                     >
                         <FileArrowUp size={20} weight="bold" /> Upload Docs
@@ -169,10 +177,12 @@ const BuilderDashboard = () => {
                             setShowCreateProjectModal(true);
                         }}
                         style={{
-                            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 24px',
                             background: '#0047AB', color: 'white', border: 'none',
                             borderRadius: '12px', fontWeight: 700, cursor: 'pointer',
-                            boxShadow: '0 4px 15px rgba(0, 71, 171, 0.2)'
+                            boxShadow: '0 4px 15px rgba(0, 71, 171, 0.2)',
+                            flex: isMobile ? 1 : 'initial',
+                            width: isMobile ? '100%' : 'auto'
                         }}
                     >
                         <Plus size={20} weight="bold" /> Start New Project
@@ -180,12 +190,12 @@ const BuilderDashboard = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2.5fr 1fr', gap: '2rem' }}>
                 {/* Left Column */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
                     {/* Quick Stats Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
                         <div style={{
                             background: '#0047AB', padding: '2rem', borderRadius: '24px',
                             color: 'white', boxShadow: '0 10px 25px rgba(0, 71, 171, 0.2)'
@@ -270,7 +280,7 @@ const BuilderDashboard = () => {
                                                 Manage Milestones
                                             </button>
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1rem' }}>
                                             {(project.timeline || [
                                                 { label: 'Planning', date: 'TBD', color: '#f1f5f9', textColor: '#64748b' },
                                                 { label: 'Foundation', date: 'TBD', color: '#f1f5f9', textColor: '#64748b' },
@@ -287,7 +297,7 @@ const BuilderDashboard = () => {
                                         </div>
                                     </div>
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                                         <div style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '16px' }}>
                                             <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700, marginBottom: '8px' }}>Financial Snapshot</div>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
@@ -421,31 +431,38 @@ const BuilderDashboard = () => {
             </div>
 
             {/* Retaining AI Modals */}
-            {showCreateProjectModal && (
-                <CreateProjectModal
-                    project={selectedProject}
-                    onClose={() => {
-                        setShowCreateProjectModal(false);
-                        setSelectedProject(null);
-                    }}
-                    onSave={handleCreateProject}
-                />
-            )}
+            {
+                showCreateProjectModal && (
+                    <CreateProjectModal
+                        isMobile={isMobile}
+                        project={selectedProject}
+                        onClose={() => {
+                            setShowCreateProjectModal(false);
+                            setSelectedProject(null);
+                        }}
+                        onSave={handleCreateProject}
+                    />
+                )
+            }
             {showAIPlanningModal && <AIPlanningModal onClose={() => setShowAIPlanningModal(false)} />}
             {showScheduleGenerationModal && <ScheduleGenerationModal onClose={() => setShowScheduleGenerationModal(false)} />}
-            {showMilestoneModal && (
-                <MilestoneManagementModal
-                    project={selectedProject}
-                    onClose={() => {
-                        setShowMilestoneModal(false);
-                        setSelectedProject(null);
-                    }}
-                />
-            )}
-            {showUploadDocsModal && (
-                <UploadDocsModal onClose={() => setShowUploadDocsModal(false)} />
-            )}
-        </div>
+            {
+                showMilestoneModal && (
+                    <MilestoneManagementModal
+                        project={selectedProject}
+                        onClose={() => {
+                            setShowMilestoneModal(false);
+                            setSelectedProject(null);
+                        }}
+                    />
+                )
+            }
+            {
+                showUploadDocsModal && (
+                    <UploadDocsModal onClose={() => setShowUploadDocsModal(false)} />
+                )
+            }
+        </div >
     );
 };
 

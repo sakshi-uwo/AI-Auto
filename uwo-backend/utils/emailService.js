@@ -5,7 +5,29 @@ import { Resend } from 'resend';
  */
 class EmailService {
     constructor() {
-        this.resend = new Resend(process.env.RESEND_API_KEY);
+        this.client = null;
+    }
+
+    /**
+     * Get or initialize the Resend client
+     * @returns {Resend|null}
+     */
+    getClient() {
+        if (this.client) return this.client;
+
+        const apiKey = process.env.RESEND_API_KEY;
+        if (!apiKey) {
+            console.warn('[EMAIL] WARNING: RESEND_API_KEY is missing. Email functionality will be disabled.');
+            return null;
+        }
+
+        try {
+            this.client = new Resend(apiKey);
+            return this.client;
+        } catch (error) {
+            console.error('[EMAIL] Failed to initialize Resend client:', error.message);
+            return null;
+        }
     }
 
     /**
@@ -17,10 +39,16 @@ class EmailService {
      */
     async sendEmail(to, subject, text, html) {
         try {
+            const resend = this.getClient();
+            if (!resend) {
+                console.error(`[EMAIL] Cannot send email to ${to}: Resend client not initialized (missing API key)`);
+                return { success: false, error: 'Email service not configured' };
+            }
+
             // Note: In free tier, you can only send to your own email unless you verify a domain.
             const fromAddress = process.env.EMAIL || 'onboarding@resend.dev';
 
-            const { data, error } = await this.resend.emails.send({
+            const { data, error } = await resend.emails.send({
                 from: `AI_AUTO <${fromAddress.trim()}>`,
                 to: [to],
                 subject,

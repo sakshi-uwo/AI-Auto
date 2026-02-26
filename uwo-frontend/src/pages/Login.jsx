@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, ArrowRight, Buildings, Warning, Eye } from '@phosphor-icons/react';
 import { authService } from '../services/api';
@@ -14,6 +14,13 @@ const Login = () => {
     const [error, setError] = useState('');
 
     const [showPassword, setShowPassword] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const roles = [
         { label: 'Admin', role: 'admin', color: 'var(--pivot-blue)' },
@@ -74,10 +81,11 @@ const Login = () => {
             }}></div>
 
             <div className="card" style={{
-                width: '100%', maxWidth: '450px', padding: '3rem', display: 'flex', flexDirection: 'column',
+                width: '100%', maxWidth: '450px', padding: isMobile ? '2rem 1.5rem' : '3rem', display: 'flex', flexDirection: 'column',
                 alignItems: 'center', gap: '2rem', boxShadow: '0 20px 50px rgba(0, 71, 171, 0.1)',
                 background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.5)', animation: 'fadeInUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)'
+                border: '1px solid rgba(255, 255, 255, 0.5)', animation: 'fadeInUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)',
+                margin: '0 1rem', overflowY: 'auto', maxHeight: '95vh'
             }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     <div style={{
@@ -91,7 +99,7 @@ const Login = () => {
                     }}>
                         <img src="/logo/AI-Auto.png" alt="AI-AUTO Logo" style={{ width: '45px', height: '45px', objectFit: 'contain' }} />
                     </div>
-                    <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#003380', letterSpacing: '-0.5px' }}>AI-AUTO</h1>
+                    <h1 style={{ fontSize: isMobile ? '2rem' : '2.5rem', fontWeight: 900, color: '#003380', letterSpacing: '-0.5px' }}>AI-AUTO</h1>
                     <p style={{ color: '#2c3e50', fontSize: '1rem', fontWeight: 600 }}>
                         {step === 'select-role' ? 'Select a role to enter' : (selectedRole?.label + ' Login')}
                     </p>
@@ -175,7 +183,7 @@ const Login = () => {
                             type="submit"
                             disabled={loading}
                             style={{
-                                padding: '14px', borderRadius: '10px', background: selectedRole.color,
+                                padding: '14px', borderRadius: '10px', background: selectedRole?.color,
                                 color: 'white', border: 'none', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
                                 transition: 'all 0.2s', boxShadow: '0 8px 20px rgba(0, 71, 171, 0.2)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',

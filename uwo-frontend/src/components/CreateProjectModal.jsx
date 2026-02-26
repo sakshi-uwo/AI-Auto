@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, CheckCircle, UploadSimple, MapPin, Calendar, CurrencyDollar, Users, Robot, FileText, ShieldCheck, CaretDown, CaretRight } from '@phosphor-icons/react';
 
-const CreateProjectModal = ({ onClose, onSave, project }) => {
+const CreateProjectModal = ({ onClose, onSave, project, isMobile }) => {
     const [formData, setFormData] = useState({
         // 1. Basic Details
         projectName: project?.name || '',
@@ -57,62 +57,119 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
     const checkboxStyle = { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 600, color: '#334155', cursor: 'pointer', marginBottom: '8px' };
 
     return (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
-            <div style={{ width: '900px', maxHeight: '90vh', background: 'white', borderRadius: '24px', display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: isMobile ? 'flex-end' : 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
+            <div style={{
+                width: isMobile ? '100%' : '900px',
+                height: isMobile ? '100%' : 'auto',
+                maxHeight: isMobile ? '100vh' : '90vh',
+                background: 'white',
+                borderRadius: isMobile ? '0' : '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                overflow: 'hidden'
+            }}>
 
                 {/* Header */}
-                <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+                <div style={{
+                    padding: isMobile ? '1.2rem' : '1.5rem 2rem',
+                    borderBottom: '1px solid #e2e8f0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: '#f8fafc',
+                    borderTopLeftRadius: isMobile ? '0' : '24px',
+                    borderTopRightRadius: isMobile ? '0' : '24px'
+                }}>
                     <div>
-                        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>{project ? 'Edit Project' : 'Start New Project'}</h2>
-                        <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>{project ? 'Update project details and settings.' : 'Configure all project details, teams, and automation settings.'}</p>
+                        <h2 style={{ fontSize: isMobile ? '1.2rem' : '1.5rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>{project ? 'Edit Project' : 'Start New Project'}</h2>
+                        <p style={{ margin: '2px 0 0 0', color: '#64748b', fontSize: '0.8rem' }}>{project ? 'Update project details and settings.' : 'Configure details, teams, and automation.'}</p>
                     </div>
-                    <button onClick={onClose} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
-                        <X size={20} weight="bold" />
+                    <button onClick={onClose} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+                        <X size={18} weight="bold" />
                     </button>
                 </div>
 
                 {/* Body - Scrollable */}
-                <div style={{ padding: '2rem', overflowY: 'auto', flex: 1, display: 'grid', gridTemplateColumns: '250px 1fr', gap: '2rem' }}>
+                <div style={{
+                    padding: isMobile ? '1rem' : '2rem',
+                    overflowY: 'auto',
+                    flex: 1,
+                    display: isMobile ? 'flex' : 'grid',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gridTemplateColumns: isMobile ? '1fr' : '250px 1fr',
+                    gap: isMobile ? '1rem' : '2rem'
+                }}>
 
                     {/* Sidebar Navigation */}
-                    <div style={{ borderRight: '1px solid #e2e8f0', paddingRight: '1rem' }}>
+                    <div style={{
+                        borderRight: isMobile ? 'none' : '1px solid #e2e8f0',
+                        borderBottom: isMobile ? '1px solid #e2e8f0' : 'none',
+                        paddingRight: isMobile ? '0' : '1rem',
+                        paddingBottom: isMobile ? '0.5rem' : '0',
+                        display: isMobile ? 'flex' : 'block',
+                        overflowX: isMobile ? 'auto' : 'visible',
+                        gap: isMobile ? '8px' : '0',
+                        marginBottom: isMobile ? '0.5rem' : '0',
+                        msOverflowStyle: 'none',
+                        scrollbarWidth: 'none'
+                    }}>
                         {[
-                            { id: 1, label: 'Basic Details', icon: <FileText /> },
-                            { id: 2, label: 'Client Information', icon: <Users /> },
-                            { id: 3, label: 'Project Location', icon: <MapPin /> },
+                            { id: 1, label: 'Basic', icon: <FileText /> },
+                            { id: 2, label: 'Client', icon: <Users /> },
+                            { id: 3, label: 'Location', icon: <MapPin /> },
                             { id: 4, label: 'Timeline', icon: <Calendar /> },
-                            { id: 5, label: 'Budget & Cost', icon: <CurrencyDollar /> },
-                            { id: 6, label: 'Team Assignment', icon: <Users /> },
-                            { id: 7, label: 'Automation', icon: <Robot /> },
-                            { id: 8, label: 'Documents', icon: <UploadSimple /> },
-                            { id: 9, label: 'Access & Visibility', icon: <ShieldCheck /> },
-                            { id: 10, label: 'Review & Create', icon: <CheckCircle /> },
+                            { id: 5, label: 'Budget', icon: <CurrencyDollar /> },
+                            { id: 6, label: 'Team', icon: <Users /> },
+                            { id: 7, label: 'Robot', icon: <Robot /> },
+                            { id: 8, label: 'Files', icon: <UploadSimple /> },
+                            { id: 9, label: 'Visibility', icon: <ShieldCheck /> },
+                            { id: 10, label: 'Review', icon: <CheckCircle /> },
                         ].map(section => (
                             <div
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
                                 style={{
-                                    padding: '12px', borderRadius: '10px', cursor: 'pointer', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 700,
+                                    padding: isMobile ? '8px 16px' : '12px',
+                                    borderRadius: '10px',
+                                    cursor: 'pointer',
+                                    marginBottom: isMobile ? '0' : '8px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 700,
                                     background: activeSection === section.id ? 'var(--pivot-blue-soft)' : 'transparent',
                                     color: activeSection === section.id ? 'var(--pivot-blue)' : '#64748b',
-                                    display: 'flex', alignItems: 'center', gap: '10px'
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    whiteSpace: 'nowrap'
                                 }}
                             >
-                                {section.icon} {section.label}
+                                {section.icon} {isMobile ? section.label : (
+                                    section.id === 1 ? 'Basic Details' :
+                                        section.id === 2 ? 'Client Information' :
+                                            section.id === 3 ? 'Project Location' :
+                                                section.id === 4 ? 'Timeline' :
+                                                    section.id === 5 ? 'Budget & Cost' :
+                                                        section.id === 6 ? 'Team Assignment' :
+                                                            section.id === 7 ? 'Automation' :
+                                                                section.id === 8 ? 'Documents' :
+                                                                    section.id === 9 ? 'Access & Visibility' :
+                                                                        'Review & Create'
+                                )}
                             </div>
                         ))}
                     </div>
 
                     {/* Form Content */}
-                    <div>
+                    <div style={{ flex: 1 }}>
                         {activeSection === 1 && (
                             <div>
-                                <h3 style={sectionHeaderStyle}>1️⃣ Project Basic Details</h3>
+                                <h3 style={sectionHeaderStyle}>1️⃣ Basic Details</h3>
                                 <div style={inputGroupStyle}>
                                     <label style={labelStyle}>PROJECT NAME <span style={{ color: 'red' }}>*</span></label>
                                     <input type="text" name="projectName" value={formData.projectName} onChange={handleChange} placeholder="e.g. Skyline Towers Phase 2" style={inputStyle} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>PROJECT TYPE</label>
                                         <select name="projectType" value={formData.projectType} onChange={handleChange} style={inputStyle}>
@@ -130,10 +187,6 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                     <label style={labelStyle}>PROJECT DESCRIPTION</label>
                                     <textarea name="description" value={formData.description} onChange={handleChange} rows="4" style={{ ...inputStyle, resize: 'vertical' }} placeholder="Brief description of the project scope..." />
                                 </div>
-                                <div style={inputGroupStyle}>
-                                    <label style={labelStyle}>PROJECT STATUS</label>
-                                    <input type="text" value="Draft (Will move to Active upon creation)" disabled style={{ ...inputStyle, background: '#f1f5f9', color: '#94a3b8' }} />
-                                </div>
                             </div>
                         )}
 
@@ -144,7 +197,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                     <label style={labelStyle}>CLIENT NAME</label>
                                     <input type="text" name="clientName" value={formData.clientName} onChange={handleChange} placeholder="e.g. John Doe" style={inputStyle} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>CLIENT EMAIL</label>
                                         <input type="email" name="clientEmail" value={formData.clientEmail} onChange={handleChange} placeholder="client@example.com" style={inputStyle} />
@@ -154,7 +207,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                         <input type="text" name="clientMobile" value={formData.clientMobile} onChange={handleChange} placeholder="+1 234 567 890" style={inputStyle} />
                                     </div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>CLIENT TYPE</label>
                                         <select name="clientType" value={formData.clientType} onChange={handleChange} style={inputStyle}>
@@ -179,7 +232,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                     <label style={labelStyle}>SITE ADDRESS</label>
                                     <input type="text" name="siteAddress" value={formData.siteAddress} onChange={handleChange} placeholder="123 Construction Ave" style={inputStyle} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>CITY</label>
                                         <input type="text" name="city" value={formData.city} onChange={handleChange} style={inputStyle} />
@@ -193,7 +246,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                         <input type="text" name="country" value={formData.country} onChange={handleChange} style={inputStyle} />
                                     </div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>PIN CODE</label>
                                         <input type="text" name="pincode" value={formData.pincode} onChange={handleChange} style={inputStyle} />
@@ -209,7 +262,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                         {activeSection === 4 && (
                             <div>
                                 <h3 style={sectionHeaderStyle}>4️⃣ Project Timeline</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>START DATE</label>
                                         <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} style={inputStyle} />
@@ -235,8 +288,8 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
 
                         {activeSection === 5 && (
                             <div>
-                                <h3 style={sectionHeaderStyle}>5️⃣ Budget & Cost Setup</h3>
-                                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <h3 style={sectionHeaderStyle}>5️⃣ Budget & Cost</h3>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>ESTIMATED PROJECT COST</label>
                                         <input type="number" name="estimatedCost" value={formData.estimatedCost} onChange={handleChange} placeholder="0.00" style={inputStyle} />
@@ -276,7 +329,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                     <label style={labelStyle}>ASSIGN SITE MANAGER</label>
                                     <input type="text" name="siteManager" value={formData.siteManager} onChange={handleChange} placeholder="Search user..." style={inputStyle} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', ...inputGroupStyle }}>
                                     <div>
                                         <label style={labelStyle}>ASSIGN QC (OPTIONAL)</label>
                                         <input type="text" name="qc" value={formData.qc} onChange={handleChange} style={inputStyle} />
@@ -291,13 +344,13 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
 
                         {activeSection === 7 && (
                             <div>
-                                <h3 style={sectionHeaderStyle}>7️⃣ Automation Setup</h3>
-                                <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                                        <span style={{ fontWeight: 800, color: '#1e293b' }}>Enable Automation</span>
+                                <h3 style={sectionHeaderStyle}>7️⃣ Automation</h3>
+                                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                        <span style={{ fontWeight: 800, color: '#1e293b', fontSize: '0.9rem' }}>Enable Automation</span>
                                         <label className="switch">
                                             <input type="checkbox" name="automationEnabled" checked={formData.automationEnabled} onChange={handleChange} />
-                                            <span style={{ fontSize: '1.5rem', cursor: 'pointer' }}>{formData.automationEnabled ? '✅' : '⬜'}</span>
+                                            <span style={{ fontSize: '1.2rem', cursor: 'pointer' }}>{formData.automationEnabled ? '✅' : '⬜'}</span>
                                         </label>
                                     </div>
 
@@ -314,7 +367,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
 
                         {activeSection === 8 && (
                             <div>
-                                <h3 style={sectionHeaderStyle}>8️⃣ Documents & Drawings</h3>
+                                <h3 style={sectionHeaderStyle}>8️⃣ Documents</h3>
                                 <div style={inputGroupStyle}>
                                     <label style={labelStyle}>APPROVED DRAWINGS</label>
                                     <input type="file" name="drawings" onChange={handleChange} style={inputStyle} />
@@ -332,7 +385,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
 
                         {activeSection === 9 && (
                             <div>
-                                <h3 style={sectionHeaderStyle}>9️⃣ Access & Visibility Settings</h3>
+                                <h3 style={sectionHeaderStyle}>9️⃣ Visibility</h3>
                                 <div style={inputGroupStyle}>
                                     <label style={labelStyle}>CLIENT VIEW LEVEL</label>
                                     <select name="clientViewLevel" value={formData.clientViewLevel} onChange={handleChange} style={inputStyle}>
@@ -341,7 +394,7 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                                 </div>
                                 <div style={inputGroupStyle}>
                                     <label style={labelStyle}>ENGINEER EDIT RIGHTS</label>
-                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '10px' }}>
                                         <label style={checkboxStyle}><input type="radio" name="engineerEditRights" checked={formData.engineerEditRights === true} onChange={() => setFormData({ ...formData, engineerEditRights: true })} /> Full Edit Access</label>
                                         <label style={checkboxStyle}><input type="radio" name="engineerEditRights" checked={formData.engineerEditRights === false} onChange={() => setFormData({ ...formData, engineerEditRights: false })} /> View Only</label>
                                     </div>
@@ -357,25 +410,25 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
 
                         {activeSection === 10 && (
                             <div>
-                                <h3 style={sectionHeaderStyle}>🔟 Review & Create</h3>
-                                <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                        <span style={{ fontWeight: 600, color: '#64748b' }}>Project Name:</span>
-                                        <span style={{ fontWeight: 700, color: '#1e293b' }}>{formData.projectName || 'Not set'}</span>
+                                <h3 style={sectionHeaderStyle}>🔟 Review</h3>
+                                <div style={{ background: '#f8fafc', padding: isMobile ? '1rem' : '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                                        <span style={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>Project Name:</span>
+                                        <span style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.85rem' }}>{formData.projectName || 'Not set'}</span>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                        <span style={{ fontWeight: 600, color: '#64748b' }}>Project Type:</span>
-                                        <span style={{ fontWeight: 700, color: '#1e293b' }}>{formData.projectType}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                                        <span style={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>Project Type:</span>
+                                        <span style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.85rem' }}>{formData.projectType}</span>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                        <span style={{ fontWeight: 600, color: '#64748b' }}>Client:</span>
-                                        <span style={{ fontWeight: 700, color: '#1e293b' }}>{formData.clientName || 'Not set'}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                                        <span style={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>Client:</span>
+                                        <span style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.85rem' }}>{formData.clientName || 'Not set'}</span>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                        <span style={{ fontWeight: 600, color: '#64748b' }}>Budget:</span>
-                                        <span style={{ fontWeight: 700, color: '#1e293b' }}>{formData.estimatedCost ? `${formData.estimatedCost} ${formData.currency}` : 'Not set'}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                                        <span style={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>Budget:</span>
+                                        <span style={{ fontWeight: 700, color: '#1e293b', fontSize: '0.85rem' }}>{formData.estimatedCost ? `${formData.estimatedCost} ${formData.currency}` : 'Not set'}</span>
                                     </div>
-                                    <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', textAlign: 'center', fontSize: '0.85rem', color: '#64748b' }}>
+                                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0', textAlign: 'center', fontSize: '0.75rem', color: '#64748b' }}>
                                         Auto-generated Project ID: <span style={{ fontWeight: 700, color: 'var(--pivot-blue)' }}>PRJ-{Math.floor(1000 + Math.random() * 9000)}</span>
                                     </div>
                                 </div>
@@ -386,15 +439,24 @@ const CreateProjectModal = ({ onClose, onSave, project }) => {
                 </div>
 
                 {/* Footer */}
-                <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderBottomLeftRadius: '24px', borderBottomRightRadius: '24px' }}>
-                    <button onClick={onClose} style={{ padding: '12px 24px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 700, color: '#64748b', cursor: 'pointer' }}>Cancel</button>
+                <div style={{
+                    padding: isMobile ? '1.2rem' : '1.5rem 2rem',
+                    borderTop: '1px solid #e2e8f0',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: '#f8fafc',
+                    borderBottomLeftRadius: isMobile ? '0' : '24px',
+                    borderBottomRightRadius: isMobile ? '0' : '24px'
+                }}>
+                    <button onClick={onClose} style={{ padding: isMobile ? '10px 16px' : '12px 24px', borderRadius: '12px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 700, color: '#64748b', cursor: 'pointer', fontSize: '0.9rem' }}>Cancel</button>
                     {activeSection < 10 ? (
-                        <button onClick={() => setActiveSection(prev => prev + 1)} style={{ padding: '12px 24px', borderRadius: '12px', background: 'var(--pivot-blue)', color: 'white', border: 'none', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            Next Step <CaretRight weight="bold" />
+                        <button onClick={() => setActiveSection(prev => prev + 1)} style={{ padding: isMobile ? '10px 16px' : '12px 24px', borderRadius: '12px', background: 'var(--pivot-blue)', color: 'white', border: 'none', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                            Next <CaretRight weight="bold" />
                         </button>
                     ) : (
-                        <button onClick={handleSubmit} style={{ padding: '12px 24px', borderRadius: '12px', background: '#10b981', color: 'white', border: 'none', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)' }}>
-                            <CheckCircle weight="bold" size={20} /> {project ? 'Save Changes' : 'Create Project'}
+                        <button onClick={handleSubmit} style={{ padding: isMobile ? '10px 16px' : '12px 24px', borderRadius: '12px', background: '#10b981', color: 'white', border: 'none', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)', fontSize: '0.9rem' }}>
+                            <CheckCircle weight="bold" size={20} /> {project ? 'Save' : 'Create'}
                         </button>
                     )}
                 </div>

@@ -52,6 +52,13 @@ const Dashboard = ({ setCurrentPage }) => {
     const [loading, setLoading] = useState(true);
     const [hoveredStatus, setHoveredStatus] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -140,7 +147,7 @@ const Dashboard = ({ setCurrentPage }) => {
     if (loading) return <div style={{ padding: '2rem' }}>Loading Dashboard...</div>;
 
     return (
-        <div style={{ padding: '2rem', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.5rem' }}>
+        <div style={{ padding: isMobile ? '1rem' : '2rem', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(5, 1fr)', gap: '1.5rem' }}>
             <MetricCard
                 icon={UserPlus}
                 title="Total Leads"
@@ -179,7 +186,7 @@ const Dashboard = ({ setCurrentPage }) => {
             {/* Leads Distribution & Management Section */}
             <div className="card"
                 style={{
-                    gridColumn: 'span 3',
+                    gridColumn: isMobile ? 'span 1' : 'span 3',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '1.5rem'
@@ -280,7 +287,7 @@ const Dashboard = ({ setCurrentPage }) => {
             </div>
 
             {/* Property Summary & Traffic Sources */}
-            <div className="card" style={{ gridColumn: 'span 2' }}>
+            <div className="card" style={{ gridColumn: isMobile ? 'span 1' : 'span 2' }}>
                 <h2 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '1.5rem' }}>Inventory & Traffic</h2>
 
                 {/* Traffic Sources Mini-List */}

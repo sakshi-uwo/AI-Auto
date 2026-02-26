@@ -96,22 +96,7 @@ body.landing-page::before {
 /* Custom Scrollbar - Only active on landing page if we could, 
    but scrollbar styles are usually global. Keep generic or prefix?
    Leaving generic for now, might affect dashboard slightly. */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-blue-primary);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-blue-bright);
-}
+/* Custom Scrollbar - Removed global blue scrollbar that leaked into dashboard */
 
 /* Utilities scoped */
 .landing-wrapper .container {

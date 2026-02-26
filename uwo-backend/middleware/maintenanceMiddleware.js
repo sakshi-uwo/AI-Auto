@@ -7,6 +7,7 @@ import SystemSettings from '../models/SystemSettings.js';
 const maintenanceMiddleware = async (req, res, next) => {
     try {
         const settings = await SystemSettings.findOne();
+        console.log(`🔍 Maintenance Check for ${req.method} ${req.originalUrl} - Mode: ${settings?.maintenanceMode}`);
 
         if (settings && settings.maintenanceMode) {
             // Check if the user is an admin

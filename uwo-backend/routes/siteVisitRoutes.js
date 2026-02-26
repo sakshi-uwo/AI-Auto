@@ -7,10 +7,12 @@ const router = express.Router();
 // @desc    Get all site visits
 router.get('/', async (req, res) => {
     try {
+        console.log('📥 GET /api/site-visits - Fetching all visits...');
         const visits = await SiteVisit.find()
             .populate('lead', 'name phone')
             .populate('project', 'title location')
             .sort({ visitDate: 1 });
+        console.log(`✅ Found ${visits.length} visits.`);
         res.json(visits);
     } catch (err) {
         console.error('❌ Error fetching site visits:', err.message);

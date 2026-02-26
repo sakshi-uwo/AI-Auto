@@ -55,15 +55,31 @@ const Navbar = () => {
             <AnimatePresence>
                 {isMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
                         className="mobile-menu"
+                        style={{
+                            position: 'absolute', top: '100%', left: '1rem', right: '1rem',
+                            marginTop: '0.5rem', borderRadius: '1.25rem',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            background: 'rgba(255,255,255,0.9)',
+                            backdropFilter: 'blur(20px)',
+                            overflow: 'hidden'
+                        }}
                     >
-                        <div className="mobile-menu-content">
-                            <Link to="/login" className="mobile-login-btn" style={{ textDecoration: 'none' }}>
-                                <span>Log in</span>
-                                <CircleUser className="login-icon" />
+                        <div className="mobile-menu-content" style={{ padding: '1.5rem' }}>
+                            <Link to="/login" className="mobile-login-btn" style={{
+                                textDecoration: 'none', background: 'var(--primary, #4f46e5)',
+                                color: 'white', padding: '1rem', borderRadius: '1rem',
+                                display: 'flex', justifyContent: 'center', fontWeight: 800,
+                                boxShadow: '0 8px 20px rgba(79, 70, 229, 0.2)'
+                            }}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                <span>Get Started</span>
+                                <CircleUser className="login-icon" style={{ color: 'white' }} />
                             </Link>
                         </div>
                     </motion.div>

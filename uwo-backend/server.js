@@ -34,6 +34,7 @@ import path from 'path';
 import NotificationService from './services/NotificationService.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import maintenanceMiddleware from './middleware/maintenanceMiddleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,7 +46,6 @@ import cookieParser from 'cookie-parser';
 import billingRoutes from './routes/billingRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
-import maintenanceMiddleware from './middleware/maintenanceMiddleware.js';
 import SystemSettings from './models/SystemSettings.js';
 import notificationService from './services/NotificationService.js';
 
@@ -57,6 +57,13 @@ app.use(helmet()); // Security headers
 app.use(cookieParser()); // Parse cookies
 app.use(express.json());
 
+// Log every request origin for CORS debugging
+app.use((req, res, next) => {
+    console.log(`📡 [${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+    console.log(`   Origin: ${req.headers.origin || 'No Origin'}`);
+    next();
+});
+
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -66,24 +73,36 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL || "http://localhost:5173",
+        origin: [
+            process.env.FRONTEND_URL || "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://192.168.29.119:5173" // Added for mobile testing
+        ],
         credentials: true,
     })
 );
 
 /* -------------------- MONGODB -------------------- */
-mongoose
-    .connect(process.env.MONGODB_URI)
-    .then(() => console.log("✅ MongoDB Atlas connected"))
-    .catch((err) => {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1);
-    });
+if (!process.env.MONGODB_URI) {
+    console.error("❌ ERROR: MONGODB_URI is not defined in the environment variables.");
+    console.error("👉 Please ensure your .env file is correctly populated with your MongoDB connection string.");
+} else {
+    mongoose
+        .connect(process.env.MONGODB_URI)
+        .then(() => console.log("✅ MongoDB Atlas connected"))
+        .catch((err) => {
+            console.error("❌ MongoDB connection error:", err);
+            process.exit(1);
+        });
+}
 
 /* -------------------- SOCKET.IO -------------------- */
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:5173",
+        origin: [
+            process.env.FRONTEND_URL || "http://localhost:5173",
+            "http://127.0.0.1:5173"
+        ],
         methods: ["GET", "POST", "PATCH"],
     },
 });

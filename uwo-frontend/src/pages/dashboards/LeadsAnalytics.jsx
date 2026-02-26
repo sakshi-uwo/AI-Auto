@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Buildings, Calendar, ChartPieSlice, Info, ArrowRight, Cube } from '@phosphor-icons/react';
-import { leadService, visitService } from '../../services/api';
+import { leadService, visitService, authService } from '../../services/api';
 import socketService from '../../services/socket';
 
 const LeadsAnalytics = () => {
@@ -10,6 +10,17 @@ const LeadsAnalytics = () => {
     const [visits, setVisits] = useState([]);
     const [loading, setLoading] = useState(true);
     const [simulating, setSimulating] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    // Safety & Role-based flags for Simulation
+    const currentUser = authService.getCurrentUser();
+    const canSimulate = !import.meta.env.PROD && currentUser?.role?.toLowerCase() === 'admin';
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -18,6 +29,8 @@ const LeadsAnalytics = () => {
                     leadService.getAll(),
                     visitService.getAll()
                 ]);
+                console.log("📊 Leads fetched:", leadsRes?.length || 0);
+                console.log("📍 Visits fetched:", visitsRes?.length || 0);
                 setLeads(leadsRes || []);
                 setVisits(visitsRes || []);
             } catch (error) {
@@ -64,7 +77,8 @@ const LeadsAnalytics = () => {
                 phone: "8871190020",
                 source: platform,
                 status: "Warm",
-                projectInterest: "Skyline Towers"
+                projectInterest: "Skyline Towers",
+                isSimulated: true // FLAG for Production-safe Demo Check
             });
             // The list will update automatically via Socket.io!
         } catch (err) {
@@ -75,7 +89,8 @@ const LeadsAnalytics = () => {
     };
 
     const getStatusData = (status) => {
-        const filteredLeads = leads.filter(l => l.status === status);
+        // Exclude simulated leads from chart analytics explicitly
+        const filteredLeads = leads.filter(l => (l.leadTemperature === status || (!l.leadTemperature && l.status === status)) && !l.isSimulated);
         const leadIds = filteredLeads.map(l => l._id);
         const statusVisits = visits.filter(v => leadIds.includes(v.lead?._id || v.lead));
 
@@ -112,9 +127,9 @@ const LeadsAnalytics = () => {
     ];
 
     const total = chartData.reduce((acc, curr) => acc + curr.value, 0);
-    const size = 320;
-    const radius = 120;
-    const strokeWidth = 60;
+    const size = isMobile ? 280 : 320;
+    const radius = isMobile ? 100 : 120;
+    const strokeWidth = isMobile ? 45 : 60;
     const center = size / 2;
     const circumference = 2 * Math.PI * radius;
 
@@ -124,30 +139,32 @@ const LeadsAnalytics = () => {
 
     return (
         <div
-            style={{ padding: '2rem', height: '100%', display: 'flex', flexDirection: 'column' }}
+            style={{ padding: isMobile ? '1rem' : '2rem', height: '100%', display: 'flex', flexDirection: 'column' }}
             onDoubleClick={() => setSelectedType(null)}
         >
-            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ marginBottom: '2.5rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1.5rem' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Leads Overview</h1>
-                    <p style={{ color: 'var(--charcoal)', fontSize: '0.9rem', marginTop: '5px' }}>
+                    <h1 style={{ fontSize: isMobile ? '1.8rem' : '2.4rem', fontWeight: 900, color: '#0f172a', margin: 0 }} className="h1">Leads Overview</h1>
+                    <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '6px', fontWeight: 500 }} className="desktop-only">
                         Visual distribution of lead statuses and their impact on operational metrics.
                     </p>
                 </div>
                 <button
                     onClick={handleSimulateLead}
-                    disabled={simulating}
+                    disabled={simulating || !canSimulate}
                     style={{
-                        padding: '12px 20px',
-                        background: 'var(--pivot-blue)',
+                        padding: '14px 24px',
+                        background: '#0047AB',
                         color: 'white',
                         border: 'none',
-                        borderRadius: '12px',
+                        borderRadius: '14px',
                         fontWeight: 700,
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 15px rgba(0, 71, 171, 0.2)',
+                        cursor: (simulating || !canSimulate) ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 15px rgba(0, 71, 171, 0.25)',
                         transition: 'all 0.3s ease',
-                        opacity: simulating ? 0.7 : 1
+                        opacity: (simulating || !canSimulate) ? 0.5 : 1,
+                        width: isMobile ? '100%' : 'auto',
+                        fontSize: '0.95rem'
                     }}
                 >
                     {simulating ? 'Processing...' : 'Simulate Real-time Lead'}
@@ -155,9 +172,10 @@ const LeadsAnalytics = () => {
             </div>
 
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                <div style={{ display: 'flex', gap: '2rem', alignItems: 'stretch' }}>
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '2rem', alignItems: 'stretch' }}>
                     <div className="card" style={{
-                        flex: '0 0 420px',
+                        flex: isMobile ? '1 1 auto' : '0 0 420px',
+                        width: isMobile ? '100%' : undefined,
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
@@ -247,10 +265,10 @@ const LeadsAnalytics = () => {
                             <>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '2.5rem' }}>
                                     <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: analyticsData[hoveredType || selectedType].color }}></div>
-                                    <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{(hoveredType || selectedType)} Lead Impact</h3>
+                                    <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{(hoveredType || selectedType)} <span className="desktop-only">Lead Impact</span></h3>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '1.5rem' : '2.5rem' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                                         <section>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: analyticsData[hoveredType || selectedType].color, marginBottom: '12px' }}>
@@ -323,16 +341,19 @@ const LeadsAnalytics = () => {
                         </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '3rem' }}>
                         {[
                             { label: 'WhatsApp', key: 'WhatsApp', color: '#25D366' },
                             { label: 'Instagram', key: 'Instagram', color: '#E4405F' },
                             { label: 'Linktree', key: 'Linktree', color: '#43E17D' },
                             { label: 'Website', key: 'Website', color: '#1877F2' }
                         ].map((platform, idx) => {
-                            const count = leads.filter(l => l.source === platform.key).length;
-                            const percentage = leads.length > 0 ? (count / leads.length) * 100 : [40, 25, 45, 15][idx];
-                            const displayCount = hasLeads ? count : [12, 8, 15, 5][idx]; // Demo value if no leads at all in DB
+                            // Exclude simulated leads from conversion analytics
+                            const realCount = leads.filter(l => l.source === platform.key && !l.isSimulated).length;
+                            const totalRealLeads = leads.filter(l => !l.isSimulated).length;
+
+                            const percentage = totalRealLeads > 0 ? (realCount / totalRealLeads) * 100 : [40, 25, 45, 15][idx];
+                            const displayCount = hasLeads ? realCount : [12, 8, 15, 5][idx]; // Demo value if no absolute leads
 
                             return (
                                 <div key={idx} style={{ marginBottom: '1.5rem' }}>
@@ -367,36 +388,50 @@ const LeadsAnalytics = () => {
                         <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Leads Management</h2>
                     </div>
 
-                    <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
-                        <thead>
-                            <tr style={{ textAlign: 'left', color: 'var(--charcoal)', opacity: 0.7 }}>
-                                <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Lead Name</th>
-                                <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Project Interest</th>
-                                <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Status</th>
-                                <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Last Activity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {leads.slice(0, 10).map((lead, i) => (
-                                <tr key={i} className="table-row" style={{ fontSize: '0.95rem', background: 'rgba(255, 255, 255, 0.5)' }}>
-                                    <td style={{ padding: '1rem 0.8rem', fontWeight: 700, color: 'var(--soft-black)', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
-                                        {lead.name || lead.user?.name || 'Valued Lead'}
-                                    </td>
-                                    <td style={{ padding: '1.2rem 0.8rem' }}>{lead.projectInterest || 'General Inquiry'}</td>
-                                    <td style={{ padding: '1.2rem 0.8rem' }}>
-                                        <span style={{
-                                            padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700,
-                                            background: lead.status === 'Hot' ? '#ffebeb' : (lead.status === 'Warm' ? '#fff4eb' : '#ebf4ff'),
-                                            color: lead.status === 'Hot' ? '#ff4d4d' : (lead.status === 'Warm' ? '#ff9f4d' : '#4d9fff'),
-                                        }}>
-                                            {lead.status}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '1.2rem 0.8rem' }}>{new Date(lead.createdAt).toLocaleDateString()}</td>
+                    <div className="table-wrapper">
+                        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 10px' }}>
+                            <thead>
+                                <tr style={{ textAlign: 'left', color: 'var(--charcoal)', opacity: 0.7 }}>
+                                    <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Lead Name</th>
+                                    <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Project Interest</th>
+                                    <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Status</th>
+                                    <th style={{ padding: '0.8rem', fontSize: '0.9rem', fontWeight: 700 }}>Last Activity</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {leads.slice(0, 10).map((lead, i) => (
+                                    <tr key={i} className="table-row" style={{ fontSize: '0.95rem', background: 'rgba(255, 255, 255, 0.5)' }}>
+                                        <td style={{ padding: '1rem 0.8rem', fontWeight: 700, color: 'var(--soft-black)', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                {lead.name || lead.user?.name || 'Valued Lead'}
+                                                {lead.isSimulated && (
+                                                    <span style={{ fontSize: '0.65rem', background: '#ffe4e6', color: '#e11d48', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
+                                                        TEST LEAD
+                                                    </span>
+                                                )}
+                                                {lead.leadScore > 0 && (
+                                                    <span title={`Score: ${lead.leadScore}`} style={{ fontSize: '0.65rem', background: '#f1f5f9', color: '#64748b', padding: '2px 8px', borderRadius: '12px', fontWeight: 800, border: '1px solid #e2e8f0' }}>
+                                                        {lead.leadScore} PTS
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td style={{ padding: '1.2rem 0.8rem' }}>{lead.projectInterest || 'General Inquiry'}</td>
+                                        <td style={{ padding: '1.2rem 0.8rem' }}>
+                                            <span style={{
+                                                padding: '6px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700,
+                                                background: (lead.leadTemperature || lead.status) === 'Hot' ? '#ffebeb' : ((lead.leadTemperature || lead.status) === 'Warm' ? '#fff4eb' : '#ebf4ff'),
+                                                color: (lead.leadTemperature || lead.status) === 'Hot' ? '#ff4d4d' : ((lead.leadTemperature || lead.status) === 'Warm' ? '#ff9f4d' : '#4d9fff'),
+                                            }}>
+                                                {lead.leadTemperature || lead.status}
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: '1.2rem 0.8rem' }}>{new Date(lead.createdAt).toLocaleDateString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

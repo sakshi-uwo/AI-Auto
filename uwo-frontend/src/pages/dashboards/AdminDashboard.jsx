@@ -25,6 +25,13 @@ const AdminDashboard = ({ setCurrentPage }) => {
     const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const [realTimeSyncEnabled, setRealTimeSyncEnabled] = useState(true);
     const [publicRegistration, setPublicRegistration] = useState(true);
@@ -287,37 +294,63 @@ const AdminDashboard = ({ setCurrentPage }) => {
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-                <h1 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Admin Control Center</h1>
-                <div style={{ display: 'flex', gap: '1.2rem' }}>
-                    <button
-                        onClick={() => setCurrentPage('reports')}
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
-                            background: 'white', color: '#0047AB', border: '1.5px solid #0047AB',
-                            borderRadius: '14px', fontWeight: 700, cursor: 'pointer',
-                            fontSize: '0.95rem', transition: 'all 0.2s ease'
-                        }}
-                    >
-                        <ChartBar size={22} weight="bold" /> Global Reports
-                    </button>
-                    <button
-                        onClick={() => setShowCreateModal(true)}
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
-                            background: '#0047AB', color: 'white', border: 'none',
-                            borderRadius: '14px', fontWeight: 700, cursor: 'pointer',
-                            fontSize: '0.95rem', boxShadow: '0 4px 14px rgba(0, 71, 171, 0.25)',
-                            transition: 'all 0.2s ease'
-                        }}
-                    >
-                        <UserPlus size={22} weight="bold" /> Create User
-                    </button>
+        <div style={{ padding: isMobile ? '1rem' : '2rem', maxWidth: '1200px', margin: '0 auto', paddingBottom: '5rem' }}>
+            {/* Page Header */}
+            <div style={{ marginBottom: '1.5rem' }}>
+                {/* Title row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isMobile ? '0.75rem' : '2rem', gap: '0.5rem' }}>
+                    <h1 style={{
+                        fontSize: isMobile ? '1.4rem' : '2.4rem',
+                        fontWeight: 800, color: '#0f172a', margin: 0,
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                    }} className="h1">Admin Control Center</h1>
+                    {!isMobile && (
+                        <div style={{ display: 'flex', gap: '1.2rem' }}>
+                            <button onClick={() => setCurrentPage('reports')} style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                                background: 'white', color: '#0047AB', border: '1.5px solid #0047AB',
+                                borderRadius: '14px', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem',
+                                transition: 'all 0.2s ease', whiteSpace: 'nowrap'
+                            }}>
+                                <ChartBar size={22} weight="bold" /> Global Reports
+                            </button>
+                            <button onClick={() => setShowCreateModal(true)} style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                                background: '#0047AB', color: 'white', border: 'none',
+                                borderRadius: '14px', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem',
+                                boxShadow: '0 4px 14px rgba(0, 71, 171, 0.25)', transition: 'all 0.2s ease',
+                                whiteSpace: 'nowrap'
+                            }}>
+                                <UserPlus size={22} weight="bold" /> Create User
+                            </button>
+                        </div>
+                    )}
                 </div>
+                {/* Mobile-only compact action buttons */}
+                {isMobile && (
+                    <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                        <button onClick={() => setCurrentPage('reports')} style={{
+                            display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px',
+                            background: 'white', color: '#0047AB', border: '1.5px solid #0047AB',
+                            borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem',
+                            transition: 'all 0.2s ease', whiteSpace: 'nowrap'
+                        }}>
+                            <ChartBar size={16} weight="bold" /> Reports
+                        </button>
+                        <button onClick={() => setShowCreateModal(true)} style={{
+                            display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px',
+                            background: '#0047AB', color: 'white', border: 'none',
+                            borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem',
+                            boxShadow: '0 4px 14px rgba(0, 71, 171, 0.25)', transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            <UserPlus size={16} weight="bold" /> Add User
+                        </button>
+                    </div>
+                )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
                 {[
                     { label: 'Active Subscriptions', value: stats.activeSubscriptions, color: '#0047AB' },
                     { label: 'System Health', value: stats.systemHealth || '99.9%', color: '#10b981' },
@@ -333,15 +366,15 @@ const AdminDashboard = ({ setCurrentPage }) => {
 
             {/* Section 0: Global Safety Overview (New) */}
             <div className="card" style={{ padding: '1.5rem', marginBottom: '2rem', borderLeft: '6px solid #e53e3e' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '1.5rem', gap: '0.75rem' }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem', margin: 0 }}>
-                        <Warning size={24} color="#e53e3e" weight="bold" /> Global Safety & High-Risk Trends
+                        <Warning size={24} color="#e53e3e" weight="bold" /> Global Safety &amp; High-Risk Trends
                     </h3>
                     <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#e53e3e', background: '#feeded', padding: '4px 12px', borderRadius: '8px' }}>
                         {incidents.filter(i => i.severity === 'Critical').length} Critical Issues
                     </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem' }}>
                     {incidents.filter(i => i.status !== 'Closed').slice(0, 3).map(incident => (
                         <div key={incident._id} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -352,7 +385,7 @@ const AdminDashboard = ({ setCurrentPage }) => {
                             <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Project: {incident.areaZone || 'Global'}</div>
                         </div>
                     ))}
-                    {incidents.length === 0 && <p style={{ gridColumn: 'span 3', textAlign: 'center', color: '#64748b', padding: '1rem' }}>No active safety hazards reported.</p>}
+                    {incidents.length === 0 && <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#64748b', padding: '1rem' }}>No active safety hazards reported.</p>}
                 </div>
             </div>
 
@@ -361,71 +394,73 @@ const AdminDashboard = ({ setCurrentPage }) => {
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem', marginBottom: '1.5rem' }}>
                     <ShieldCheck size={24} color="var(--pivot-blue)" /> Users & Permissions
                 </h3>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                        <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', opacity: 0.6 }}>
-                            <th style={{ padding: '1rem' }}>User Profile</th>
-                            <th style={{ padding: '1rem' }}>Role</th>
-                            <th style={{ padding: '1rem' }}>Status</th>
-                            <th style={{ padding: '1rem', textAlign: 'right' }}>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((u) => (
-                            <tr key={u._id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                                <td style={{ padding: '1rem', fontWeight: 600 }}>{u.name}</td>
-                                <td style={{ padding: '1rem' }}>{u.role}</td>
-                                <td style={{ padding: '1rem' }}>
-                                    <span style={{
-                                        padding: '4px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 700,
-                                        background: u.status === 'Active' ? '#e6f4ea' : u.status === 'Pending' ? '#fffbeb' : '#fff0f0',
-                                        color: u.status === 'Active' ? '#1e7e34' : u.status === 'Pending' ? '#b45309' : '#e53e3e'
-                                    }}>{u.status}</span>
-                                </td>
-                                <td style={{ padding: '1rem', textAlign: 'right' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
-                                        <button
-                                            onClick={() => { setSelectedUser(u); setShowDetailsModal(true); }}
-                                            style={{
-                                                background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '8px',
-                                                cursor: 'pointer', color: '#0047AB', fontWeight: 700, fontSize: '0.75rem',
-                                                display: 'flex', alignItems: 'center', gap: '5px'
-                                            }}
-                                        >
-                                            <Eye size={16} weight="bold" /> View
-                                        </button>
-
-                                        {u.status === 'Pending' ? (
+                <div className="table-wrapper">
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                            <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', opacity: 0.6 }}>
+                                <th style={{ padding: '1rem' }}>User Profile</th>
+                                <th style={{ padding: '1rem' }}>Role</th>
+                                <th style={{ padding: '1rem' }}>Status</th>
+                                <th style={{ padding: '1rem', textAlign: 'right' }}>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((u) => (
+                                <tr key={u._id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                    <td style={{ padding: '1rem', fontWeight: 600 }}>{u.name}</td>
+                                    <td style={{ padding: '1rem' }}>{u.role}</td>
+                                    <td style={{ padding: '1rem' }}>
+                                        <span style={{
+                                            padding: '4px 10px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 700,
+                                            background: u.status === 'Active' ? '#e6f4ea' : u.status === 'Pending' ? '#fffbeb' : '#fff0f0',
+                                            color: u.status === 'Active' ? '#1e7e34' : u.status === 'Pending' ? '#b45309' : '#e53e3e'
+                                        }}>{u.status}</span>
+                                    </td>
+                                    <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
                                             <button
-                                                onClick={() => toggleStatus(u._id)}
+                                                onClick={() => { setSelectedUser(u); setShowDetailsModal(true); }}
                                                 style={{
-                                                    background: '#ecfdf5', border: '1px solid #10b981', color: '#059669', padding: '6px 12px', borderRadius: '8px',
-                                                    cursor: 'pointer', fontWeight: 800, fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '5px'
+                                                    background: '#f1f5f9', border: 'none', padding: '6px 12px', borderRadius: '8px',
+                                                    cursor: 'pointer', color: '#0047AB', fontWeight: 700, fontSize: '0.75rem',
+                                                    display: 'flex', alignItems: 'center', gap: '5px'
                                                 }}
                                             >
-                                                <ShieldCheck size={16} weight="bold" /> Approve
+                                                <Eye size={16} weight="bold" /> View
                                             </button>
-                                        ) : (
-                                            <button onClick={() => toggleStatus(u._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: u.status === 'Active' ? '#10b981' : '#cbd5e1', transition: 'all 0.2s' }}>
-                                                {u.status === 'Active' ? <ToggleRight size={32} weight="fill" /> : <ToggleLeft size={32} weight="fill" />}
-                                            </button>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+
+                                            {u.status === 'Pending' ? (
+                                                <button
+                                                    onClick={() => toggleStatus(u._id)}
+                                                    style={{
+                                                        background: '#ecfdf5', border: '1px solid #10b981', color: '#059669', padding: '6px 12px', borderRadius: '8px',
+                                                        cursor: 'pointer', fontWeight: 800, fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '5px'
+                                                    }}
+                                                >
+                                                    <ShieldCheck size={16} weight="bold" /> Approve
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => toggleStatus(u._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: u.status === 'Active' ? '#10b981' : '#cbd5e1', transition: 'all 0.2s' }}>
+                                                    {u.status === 'Active' ? <ToggleRight size={32} weight="fill" /> : <ToggleLeft size={32} weight="fill" />}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '2rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr', gap: '2rem', marginBottom: '2rem' }}>
                 {/* Section 2: Activity Logs & Audit Trails */}
                 <div className="card" style={{ padding: '1.5rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '1.5rem', gap: '1rem' }}>
                         <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem', margin: 0 }}>
-                            <ListBullets size={24} color="#0047AB" /> Audit Trails & Logs
+                            <ListBullets size={24} color="#0047AB" /> Audit Trails &amp; Logs
                         </h3>
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                             {['All', 'Security', 'Finance', 'Automation'].map(filter => (
                                 <button
                                     key={filter}
@@ -434,10 +469,11 @@ const AdminDashboard = ({ setCurrentPage }) => {
                                         padding: '5px 12px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700,
                                         border: 'none', cursor: 'pointer',
                                         background: logFilter === filter ? '#0047AB' : '#f1f5f9',
-                                        color: logFilter === filter ? 'white' : '#64748b'
+                                        color: logFilter === filter ? 'white' : '#64748b',
+                                        whiteSpace: 'nowrap'
                                     }}
                                 >
-                                    {filter === 'Security' ? 'Security Logs' : filter}
+                                    {filter === 'Security' ? 'Security' : filter}
                                 </button>
                             ))}
                         </div>
@@ -454,16 +490,18 @@ const AdminDashboard = ({ setCurrentPage }) => {
                     )}
                     <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
                         {logs.filter(log => logFilter === 'All' || log.status === logFilter).slice(0, 7).map(log => (
-                            <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #f1f5f9' }}>
-                                <div>
-                                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1e293b' }}>
-                                        {log.action} <span style={{ color: '#94a3b8', fontWeight: 400 }}>—</span> {log.user} <span style={{ color: '#94a3b8', fontWeight: 400 }}>—</span> {log.time}
+                            <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '12px 0', borderBottom: '1px solid #f1f5f9', gap: '8px' }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: isMobile ? '0.8rem' : '0.95rem', fontWeight: 700, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'normal' : 'nowrap' }}>
+                                        {log.action} <span style={{ color: '#94a3b8', fontWeight: 400 }}>—</span> {log.user}
+                                        {!isMobile && <><span style={{ color: '#94a3b8', fontWeight: 400 }}> —</span> {log.time}</>}
                                     </div>
+                                    {isMobile && <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px' }}>{log.time}</div>}
                                     <div style={{ fontSize: '0.75rem', color: log.status === 'Security' ? '#ef4444' : log.status === 'Finance' ? '#22c55e' : log.status === 'Automation' ? '#0ea5e9' : '#64748b', fontWeight: 600, marginTop: '4px' }}>
                                         #{log.status.toUpperCase()}
                                     </div>
                                 </div>
-                                <CaretRight size={16} color="#94a3b8" />
+                                <CaretRight size={16} color="#94a3b8" style={{ flexShrink: 0, marginTop: '4px' }} />
                             </div>
                         ))}
                     </div>
@@ -500,13 +538,13 @@ const AdminDashboard = ({ setCurrentPage }) => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '2rem' }}>
                 {/* Section 4: System-Wide Settings */}
                 <div className="card" style={{ padding: '1.5rem' }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1.2rem', marginBottom: '1.5rem', color: '#0f172a' }}>
                         <Globe size={22} color="#0047AB" /> System Configuration
                     </h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                         {[
                             { label: 'Security Logs', icon: <ShieldCheck size={18} />, status: 'View', action: () => setLogFilter('Security'), color: '#0047AB' },
                             { label: 'Real-time Sync', icon: <BellRinging size={18} />, status: realTimeSyncEnabled ? 'On' : 'Off', action: () => setShowSyncModal(true), color: realTimeSyncEnabled ? '#0047AB' : '#ef4444' },
@@ -581,17 +619,19 @@ const AdminDashboard = ({ setCurrentPage }) => {
                 onUpdateSettings={updateMultipleSettings}
             />
             {showCreateModal && <CreateUserModal onClose={() => { setShowCreateModal(false); setSelectedUser(null); }} onSave={handleSaveUser} initialData={selectedUser} />}
-            {showDetailsModal && (
-                <UserDetailsModal
-                    user={selectedUser}
-                    onClose={() => setShowDetailsModal(false)}
-                    onEdit={(user) => {
-                        setShowDetailsModal(false);
-                        setSelectedUser(user);
-                        setShowCreateModal(true);
-                    }}
-                />
-            )}
+            {
+                showDetailsModal && (
+                    <UserDetailsModal
+                        user={selectedUser}
+                        onClose={() => setShowDetailsModal(false)}
+                        onEdit={(user) => {
+                            setShowDetailsModal(false);
+                            setSelectedUser(user);
+                            setShowCreateModal(true);
+                        }}
+                    />
+                )
+            }
 
             <style>{`
                 .card {

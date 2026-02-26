@@ -267,3 +267,42 @@
 .calendar-day.inactive {
     opacity: 0.2;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .site-visits-container {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .page-header p {
+        font-size: 0.85rem;
+    }
+
+    .summary-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .summary-card {
+        padding: 1rem;
+    }
+
+    .main-content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .visits-list-card {
+        min-height: auto;
+        padding: 1rem;
+    }
+
+    .calendar-card {
+        padding: 1rem;
+    }
+}

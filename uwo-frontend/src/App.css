@@ -1,6 +1,12 @@
-/* App specific styles if needed */
+/* App specific styles */
 .app-container {
   min-height: 100vh;
+}
+
+/* Main content sits next to the sidebar on desktop */
+.main-content {
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
 }
 
 .content-area {
@@ -16,5 +22,148 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ─────────────────────────────────────────
+   MOBILE RESPONSIVE — 768px breakpoint
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Remove sidebar offset */
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 60px !important;
+    /* Space for mobile navbar if any */
+  }
+
+  /* All pages: tighter padding */
+  .content-area>div {
+    padding: 0.75rem !important;
+  }
+
+  /* ── GRID OVERRIDES ──────────────────── 
+     NOTE: Grid layouts are handled per-component via isMobile state.
+     Global overrides here fight with component-level responsive logic. */
+
+  /* ── FLEX OVERRIDES ─────────────────── */
+  /* Large fixed-width flex children (like chart panels) */
+  div[style*="flex: 0 0"],
+  div[style*="flex:0 0"] {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* NOTE: We intentionally do NOT globally force flex-wrap on content-area divs.
+     Each component manages its own flex-wrap via isMobile state. Forcing it globally
+     breaks button internal flex layouts (icon + text wrap onto separate lines). */
+
+  /* ── TABLE RESPONSIVENESS ───────────── */
+  table,
+  .table-wrapper,
+  .overflow-x-auto {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    border-collapse: collapse !important;
+  }
+
+  /* ── CARD PADDING REDUCTION ─────────── */
+  .card {
+    padding: 1.25rem !important;
+    border-radius: 16px !important;
+  }
+
+  /* ── PAGE HEADERS ───────────────────── */
+  h1,
+  .h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2,
+  .h2 {
+    font-size: 1.5rem !important;
+  }
+
+  h3,
+  .h3 {
+    font-size: 1.25rem !important;
+  }
+
+  /* ── REPORTS & SIDE-NAV SPECIFIC ─────── */
+  /* If there's a horizontal tab/nav bar on desktop, stack it or scroll it */
+  div[style*="flex-direction: column"][style*="width: 2"] {
+    width: 100% !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* ── MODALS — Bottom Sheet Style ─────── */
+  div[style*="position: fixed"][style*="z-index: 10"],
+  div[style*="position: fixed"][style*="zIndex: 10"] {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  div[style*="backgroundColor: 'white'"],
+  div[style*="background: var(--glass-bg)"],
+  .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 24px 24px 0 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    padding: 1.5rem !important;
+  }
+
+  /* ── CHART SVG ──────────────────────── */
+  /* Only target recharts containers — NOT all SVGs (would break icon sizes) */
+  .recharts-responsive-container {
+    width: 100% !important;
+    min-height: 250px !important;
+  }
+
+  /* Recharts inner SVGs only */
+  .recharts-wrapper svg,
+  .recharts-surface {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* ── CALENDAR GRID ──────────── */
+  div[style*="gridTemplateColumns: 'repeat(7, 1fr)'"],
+  div[style*="grid-template-columns: repeat(7"] {
+    grid-template-columns: repeat(7, 1fr) !important;
+    gap: 4px !important;
+  }
+}
+
+/* ─────────────────────────────────────────
+   SMALL MOBILE — 480px breakpoint
+───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .content-area>div {
+    padding: 0.5rem !important;
+  }
+
+  .card {
+    padding: 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  /* Ensure text inputs are full width, but NOT buttons (buttons manage their own width via isMobile state) */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }

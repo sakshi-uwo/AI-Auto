@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { VertexAI } from '@google-cloud/vertexai';
 import 'dotenv/config';
 import path from 'path';
@@ -6,25 +5,17 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Dual-mode initialization: Try Gemini API Key first, fallback to Vertex AI
-const apiKey = process.env.GEMINI_API_KEY;
+// Vertex AI initialization
 const projectId = process.env.GCP_PROJECT_ID;
-const location = 'us-central1';
+const location = 'asia-south1';
 const keyFilePath = path.join(__dirname, '../google_cloud_credentials.json');
 
-let genAI;
 let vertexAI;
 let useVertexAI = false;
 
-// Try Gemini API Key first (simpler, more portable)
-if (apiKey) {
-  console.log(`✅ Gemini AI initializing with API Key`);
-  genAI = new GoogleGenerativeAI(apiKey);
-  useVertexAI = false;
-}
-// Fallback to Vertex AI with service account
-else if (projectId) {
-  console.log(`✅ Vertex AI initializing with project: ${projectId}`);
+// Initialize Vertex AI with service account
+if (projectId) {
+  console.log(`✅ Vertex AI initializing with project: ${projectId} in ${location}`);
   try {
     vertexAI = new VertexAI({ project: projectId, location: location, keyFilename: keyFilePath });
     useVertexAI = true;
@@ -38,11 +29,11 @@ else if (projectId) {
     }
   }
 } else {
-  console.error("❌ Error: Neither GEMINI_API_KEY nor GCP_PROJECT_ID found in environment variables.");
+  console.error("❌ Error: GCP_PROJECT_ID not found in environment variables.");
 }
 
-// Model name - gemini-2.0-flash-001 is available in us-central1
-export const modelName = "gemini-2.0-flash-001";
+// Model name - gemini-1.5-flash or gemini-2.0-flash
+export const modelName = "gemini-2.5-flash";
 
 const systemInstructionText = `You are AI-AUTO , the internal intelligent sales and operations assistant developed for the AI-AUTO Builder Platform.
 
@@ -97,36 +88,27 @@ Primary Objective:
 Help builders improve lead conversion, site visit efficiency, and inventory movement through intelligent operational guidance.`;
 
 // Create generative model based on available initialization
-export const generativeModel = useVertexAI
-  ? vertexAI.preview.getGenerativeModel({
-    model: modelName,
-    safetySettings: [
-      {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-    ],
-    generationConfig: { maxOutputTokens: 4096 },
-    systemInstruction: systemInstructionText,
-  })
-  : genAI.getGenerativeModel({
-    model: modelName,
-    safetySettings: [
-      {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-      },
-    ],
-    generationConfig: { maxOutputTokens: 4096 },
-    systemInstruction: systemInstructionText,
-  });
-
-// Export genAI instance for multi-model support in chatRoutes
-export const genAIInstance = useVertexAI
-  ? {
-    getGenerativeModel: (options) => vertexAI.preview.getGenerativeModel(options)
+const getModelSafely = () => {
+  try {
+    if (useVertexAI && vertexAI) {
+      return vertexAI.preview.getGenerativeModel({
+        model: modelName,
+        generationConfig: { maxOutputTokens: 4096 },
+        systemInstruction: systemInstructionText,
+      });
+    }
+  } catch (error) {
+    console.error('❌ Failed to initialize generative model:', error.message);
   }
-  : genAI;
+  return null;
+};
 
-// Export vertexAI for compatibility (mock if using Gemini API)
+export const generativeModel = getModelSafely();
+
+// Export genAI instance for multi-model support in chatRoutes (adapted for Vertex)
+export const genAIInstance = {
+  getGenerativeModel: (options) => vertexAI ? vertexAI.preview.getGenerativeModel(options) : { generateContent: async () => ({ response: { text: () => "AI Service currently unavailable." } }) }
+};
+
+// Export vertexAI for compatibility
 export { vertexAI };

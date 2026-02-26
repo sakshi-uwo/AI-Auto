@@ -12,6 +12,14 @@ import { API_BASE_URL } from '../../config/api';
 import socketService from '../../services/socket';
 
 const ManageAttendance = ({ setCurrentPage }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 820);
+
+    React.useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 820);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const [viewMode, setViewMode] = useState('attendance'); // 'attendance' or 'labor'
     const [workers, setWorkers] = useState([]);
     const [projects, setProjects] = useState([]);
@@ -196,8 +204,15 @@ const ManageAttendance = ({ setCurrentPage }) => {
         <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: 'Inter, sans-serif', background: '#f8fafc', minHeight: '100vh', position: 'relative' }}>
 
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                justifyContent: 'space-between',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                marginBottom: '2rem',
+                gap: '1.5rem'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.8rem' : '1.5rem' }}>
                     <button
                         onClick={() => setCurrentPage('dashboard')}
                         style={{ border: 'none', background: 'white', padding: '10px', borderRadius: '12px', cursor: 'pointer', display: 'flex', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}
@@ -205,7 +220,7 @@ const ManageAttendance = ({ setCurrentPage }) => {
                         <BackIcon size={20} weight="bold" color="#64748b" />
                     </button>
                     <div>
-                        <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0047AB', margin: 0 }}>
+                        <h2 style={{ fontSize: isMobile ? '1.4rem' : '1.8rem', fontWeight: 900, color: '#0047AB', margin: 0 }}>
                             {viewMode === 'attendance' ? 'Daily Attendance & Compliance' : 'Labor Management System'}
                         </h2>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
@@ -224,29 +239,44 @@ const ManageAttendance = ({ setCurrentPage }) => {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '0.8rem', width: isMobile ? '100%' : 'auto' }}>
                     <button
                         onClick={() => setViewMode(viewMode === 'attendance' ? 'labor' : 'attendance')}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', background: 'white', border: '1px solid #0047AB', borderRadius: '12px', fontWeight: 700, color: '#0047AB', cursor: 'pointer' }}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '8px', padding: isMobile ? '10px 14px' : '12px 20px',
+                            background: 'white', border: '1px solid #0047AB', borderRadius: '12px', fontWeight: 700,
+                            color: '#0047AB', cursor: 'pointer', flex: isMobile ? 1 : 'initial', justifyContent: 'center',
+                            fontSize: isMobile ? '0.8rem' : '1rem'
+                        }}
                     >
-                        {viewMode === 'attendance' ? <Users size={20} /> : <CheckCircle size={20} />}
-                        {viewMode === 'attendance' ? 'Manage Labor' : 'Mark Attendance'}
+                        {viewMode === 'attendance' ? <Users size={isMobile ? 18 : 20} /> : <CheckCircle size={isMobile ? 18 : 20} />}
+                        {viewMode === 'attendance' ? 'Labor' : 'Attendance'}
                     </button>
 
                     {viewMode === 'attendance' ? (
                         <button
                             onClick={handleBulkSave}
                             disabled={saving}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', background: '#0047AB', border: 'none', borderRadius: '12px', fontWeight: 700, color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 71, 171, 0.2)' }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', padding: isMobile ? '10px 14px' : '12px 24px',
+                                background: '#0047AB', border: 'none', borderRadius: '12px', fontWeight: 700,
+                                color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 71, 171, 0.2)',
+                                flex: isMobile ? 1 : 'initial', justifyContent: 'center', fontSize: isMobile ? '0.8rem' : '1rem'
+                            }}
                         >
-                            {saving ? 'Saving...' : <><FloppyDisk size={20} weight="bold" /> Finalize Records</>}
+                            {saving ? 'Saving...' : <><FloppyDisk size={isMobile ? 18 : 20} weight="bold" /> Finalize</>}
                         </button>
                     ) : (
                         <button
                             onClick={() => { setSelectedWorker(null); setFormData({ name: '', role: 'Helper', tradeType: 'Civil', contractor: '', phoneNumber: '', wageType: 'Daily', wageAmount: '', idProof: '', status: 'Active' }); setShowLaborForm(true); }}
-                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', background: '#0047AB', border: 'none', borderRadius: '12px', fontWeight: 700, color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 71, 171, 0.2)' }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '8px', padding: isMobile ? '10px 14px' : '12px 24px',
+                                background: '#0047AB', border: 'none', borderRadius: '12px', fontWeight: 700,
+                                color: 'white', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0, 71, 171, 0.2)',
+                                flex: isMobile ? 1 : 'initial', justifyContent: 'center', fontSize: isMobile ? '0.8rem' : '1rem'
+                            }}
                         >
-                            <UserPlus size={20} weight="bold" /> Add New Labor
+                            <UserPlus size={isMobile ? 18 : 20} weight="bold" /> Add Labor
                         </button>
                     )}
                 </div>
@@ -254,7 +284,7 @@ const ManageAttendance = ({ setCurrentPage }) => {
 
             {/* Quick Stats Grid (Only on Attendance) */}
             {viewMode === 'attendance' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(6, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
                     {[
                         { label: 'Total Workers', value: stats.totalWorkers, icon: <Users size={24} />, color: '#0047AB', bg: '#eff6ff' },
                         { label: 'Present', value: stats.present, icon: <CheckCircle size={24} />, color: '#16a34a', bg: '#f0fdf4' },
@@ -275,8 +305,18 @@ const ManageAttendance = ({ setCurrentPage }) => {
             )}
 
             {/* Filters & Search */}
-            <div style={{ background: 'white', padding: '1.5rem', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div style={{ position: 'relative', flex: 1, minWidth: '300px' }}>
+            <div style={{
+                background: 'white',
+                padding: isMobile ? '1.2rem' : '1.5rem',
+                borderRadius: '24px',
+                border: '1px solid #e2e8f0',
+                marginBottom: '2rem',
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: '1rem',
+                alignItems: isMobile ? 'stretch' : 'center'
+            }}>
+                <div style={{ position: 'relative', flex: 1, minWidth: isMobile ? '100%' : '300px' }}>
                     <MagnifyingGlass size={20} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                     <input
                         type="text"
@@ -287,11 +327,11 @@ const ManageAttendance = ({ setCurrentPage }) => {
                     />
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.8rem' }}>
+                <div style={{ display: 'flex', gap: '0.8rem', flexDirection: isMobile ? 'column' : 'row' }}>
                     <select
                         value={filter.trade}
                         onChange={(e) => setFilter(prev => ({ ...prev, trade: e.target.value }))}
-                        style={{ padding: '12px 15px', borderRadius: '12px', border: '1px solid #e2e8f0', fontWeight: 600, color: '#475569', outline: 'none', minWidth: '150px' }}
+                        style={{ padding: '12px 15px', borderRadius: '12px', border: '1px solid #e2e8f0', fontWeight: 600, color: '#475569', outline: 'none', minWidth: isMobile ? '100%' : '150px' }}
                     >
                         {trades.map(t => <option key={t} value={t}>{t === 'All' ? 'All Trades' : t}</option>)}
                     </select>
@@ -299,7 +339,7 @@ const ManageAttendance = ({ setCurrentPage }) => {
                     <select
                         value={filter.contractor}
                         onChange={(e) => setFilter(prev => ({ ...prev, contractor: e.target.value }))}
-                        style={{ padding: '12px 15px', borderRadius: '12px', border: '1px solid #e2e8f0', fontWeight: 600, color: '#475569', outline: 'none', minWidth: '150px' }}
+                        style={{ padding: '12px 15px', borderRadius: '12px', border: '1px solid #e2e8f0', fontWeight: 600, color: '#475569', outline: 'none', minWidth: isMobile ? '100%' : '150px' }}
                     >
                         {contractors.map(c => <option key={c} value={c}>{c === 'All' ? 'All Contractors' : c}</option>)}
                     </select>
@@ -308,16 +348,21 @@ const ManageAttendance = ({ setCurrentPage }) => {
                 {viewMode === 'attendance' && (
                     <button
                         onClick={handleAutoSync}
-                        style={{ marginLeft: 'auto', padding: '12px 20px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #dcfce7', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                        style={{
+                            padding: '12px 20px', background: '#f0fdf4', color: '#16a34a',
+                            border: '1px solid #dcfce7', borderRadius: '12px', fontWeight: 700,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
+                            justifyContent: isMobile ? 'center' : 'flex-start'
+                        }}
                     >
-                        <SealCheck size={20} weight="bold" /> Auto-Sync device
+                        <SealCheck size={20} weight="bold" /> {isMobile ? 'Sync' : 'Auto-Sync device'}
                     </button>
                 )}
             </div>
 
             {/* Main Content Area */}
-            <div className="card" style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="table-wrapper" style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '850px' }}>
                     <thead>
                         <tr style={{ background: '#f8fafc', textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
                             <th style={{ padding: '1.2rem', color: '#64748b', fontSize: '0.85rem', fontWeight: 800 }}>WORKER PROFILE</th>
@@ -424,13 +469,22 @@ const ManageAttendance = ({ setCurrentPage }) => {
 
             {/* Labor Form Modal */}
             {showLaborForm && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div style={{ background: 'white', width: '550px', borderRadius: '28px', padding: '2.5rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+                    display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'white', width: isMobile ? '100%' : '550px',
+                        borderRadius: isMobile ? '28px 28px 0 0' : '28px',
+                        padding: isMobile ? '1.5rem' : '2.5rem',
+                        boxShadow: '0 -10px 40px rgba(0,0,0,0.1)',
+                        maxHeight: '90vh', overflowY: 'auto'
+                    }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                            <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#0f172a' }}>{selectedWorker ? 'Update Labor Details' : 'Onboard New Labor'}</h3>
+                            <h3 style={{ margin: 0, fontSize: isMobile ? '1.2rem' : '1.4rem', fontWeight: 900, color: '#0f172a' }}>{selectedWorker ? 'Update Labor Details' : 'Onboard New Labor'}</h3>
                             <button onClick={() => setShowLaborForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={24} weight="bold" /></button>
                         </div>
-                        <form onSubmit={handleAddLabor} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+                        <form onSubmit={handleAddLabor} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.2rem' }}>
                             <div style={{ gridColumn: 'span 2' }}>
                                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#64748b', marginBottom: '6px' }}>Labor Name</label>
                                 <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Full name" style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
@@ -478,10 +532,19 @@ const ManageAttendance = ({ setCurrentPage }) => {
 
             {/* Assignment Form Modal */}
             {showAssignForm && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div style={{ background: 'white', width: '500px', borderRadius: '28px', padding: '2.5rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+                    display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'white', width: isMobile ? '100%' : '500px',
+                        borderRadius: isMobile ? '28px 28px 0 0' : '28px',
+                        padding: isMobile ? '1.5rem' : '2.5rem',
+                        boxShadow: '0 -10px 40px rgba(0,0,0,0.1)',
+                        maxHeight: '90vh', overflowY: 'auto'
+                    }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                            <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: '#0f172a' }}>Project Assignment</h3>
+                            <h3 style={{ margin: 0, fontSize: isMobile ? '1.2rem' : '1.4rem', fontWeight: 900, color: '#0f172a' }}>Project Assignment</h3>
                             <button onClick={() => setShowAssignForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={24} weight="bold" /></button>
                         </div>
                         <div style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>

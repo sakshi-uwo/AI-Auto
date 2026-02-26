@@ -6,7 +6,7 @@ export const getDashboardStats = async () => {
     const [totalUsers, activeProjects, leads] = await Promise.all([
         User.countDocuments(),
         Project.countDocuments({ status: 'In Progress' }),
-        Lead.find()
+        Lead.find({ isSimulated: { $ne: true } })
     ]);
 
     const distribution = {

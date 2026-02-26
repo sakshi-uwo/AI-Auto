@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "forceConsistentCasingInFileNames": false,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "allowJs": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
